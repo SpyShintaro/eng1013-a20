@@ -33,10 +33,19 @@ board.set_pin_mode_digital_output(Fl)
 print("CTRL+C to end program")
 
 def find_light_type():
-	
+	"""
+    Determines if it is day or night based on the LDR reading.
+
+    PARAMETERS:
+    None
+
+    RETURNS:
+    str: "day" if it is day, "night" if it is night.
+    """
+
 	resultLdr = board.analog_read(ldrPin)
 	
-	if resultLdr and 0 <= resultLdr[0] < 300:
+	if resultLdr and 0 <= resultLdr[0] < 275:
 		print("Night time detected")
 		return "night"
 	else:
@@ -44,6 +53,16 @@ def find_light_type():
 		return "day"
 
 def overheight_exit_subsystem():
+	"""
+    Brings all components of subsystem 3 together. Tl5 is red when the sensor detects no overheight traffic, turns green when overheight traffic is detected.
+
+    PARAMETERS:
+    None
+
+    RETURNS:
+    None
+    """
+
 
 	recentReadings = []
 	tolerance = 3
