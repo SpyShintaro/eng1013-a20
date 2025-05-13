@@ -134,11 +134,31 @@ def warning_lights_alert_buzzer_system1(a,b):
         board.digital_pin_write(warningLightPin1, 1)
         board.digital_pin_write(warningLightPin2, 0)
         board.digital_pin_write(buzzerPin,1)
-        time.sleep(timeBetweenFlashes/2)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
         board.digital_pin_write(warningLightPin2, 1)
         board.digital_pin_write(warningLightPin1, 0)
-        board.digital_pin_write(buzzerPin,0)  
-        time.sleep(timeBetweenFlashes/2)
+        board.digital_pin_write(buzzerPin,0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+
+
+
+def sleep(duration: float) -> float:
+    """
+    Function for assigning soft delay in between processes
+
+    PARAMETERS:
+    duration: Time in seconds of delay
+
+    RETURN:
+    endTime: The time at which the process should resume
+    """
+    return time.time() + duration
 
 while True:
     try: 
