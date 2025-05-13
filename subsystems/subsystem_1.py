@@ -147,7 +147,6 @@ def warning_lights_alert_buzzer_system1(a,b):
                 break
 
 
-
 def sleep(duration: float) -> float:
     """
     Function for assigning soft delay in between processes
