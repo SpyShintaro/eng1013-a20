@@ -2,6 +2,8 @@ from subsystems import tunnel_ave_subsytem as s2
 from pymata4 import pymata4
 import time
 
+from modules import utils
+
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
     "TL1": {
@@ -72,7 +74,7 @@ def main():
         try:
 
             # Get Inputs
-            inputs = get_inputs() # <- Testing for pushbutton being pressed
+            inputs = utils.get_inputs() # <- Testing for pushbutton being pressed
 
             # Run Base Functions (most integration functions overwrite base functionality)?
             runS1 = True
@@ -91,67 +93,24 @@ def main():
                         if time.time() >= s1["clock"]:
                             if inputs["PB1"]:
                                 print("crossing")
-                                change_light(shiftReg2["TL4"], "Y")
-                                s1["phase"], s1["clock"] = 1, sleep(2) # This just saves space by assigning two variables at the same time (i.e. s1["phase"] = 1)
+                                utils.change_light(shiftReg2["TL4"], "Y")
+                                s1["phase"], s1["clock"] = 1, utils.sleep(2) # This just saves space by assigning two variables at the same time (i.e. s1["phase"] = 1)
                     
                     case 1:
                         if time.time() >= s1["clock"]:
-                            change_light(shiftReg2["TL4"], "R")
-                            s1["phase"], s1["clock"] = 2, sleep(5)
+                            utils.change_light(shiftReg2["TL4"], "R")
+                            s1["phase"], s1["clock"] = 2, utils.sleep(5)
                     
                     case 2:
                         if time.time() >= s1["clock"]:
-                            change_light(shiftReg2["TL4"], "G")
-                            s1["phase"], s1["clock"] = 0, sleep(15)
+                            utils.change_light(shiftReg2["TL4"], "G")
+                            s1["phase"], s1["clock"] = 0, utils.sleep(15)
 
         
         except KeyboardInterrupt as e:
             print('Ending Program')
             #board.shutdown()
             raise e
-    
-def get_inputs() -> dict:
-    # Reads all inputs from the R-2R Ladder
-    return {
-        "PB1": True,
-        "US1": False,
-        "US2": False,
-        "US3": False
-    }
-
-def sleep(duration: float) -> float:
-    """
-    Function for assigning soft delay in between processes
-
-    PARAMETERS:
-    duration: Time in seconds of delay
-
-    RETURN:
-    endTime: The time at which the process should resume
-    """
-    return time.time() + duration
-
-def change_light(lightSet: dict, lightPin: str):
-    """
-    Changes the active LED in the given light set to the one located at the desired pin
-
-    PARAMETERS:
-    lightSet (dict) -> What set of output pins will be modified
-    lightPin (str) -> The name of the pin
-
-    RETURNS:
-    None
-    """
-
-    for light in lightSet: # Turns on selected pin, and turns off all other pins in the set
-        if light == lightPin:
-            lightSet[light] = 1
-        else:
-            lightSet[light] = 0
-
-
-def handle_outputs():
-    pass
 
 if __name__ == "__main__":
     #board = pymata4.Pymata4()
