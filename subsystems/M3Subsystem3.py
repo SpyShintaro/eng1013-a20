@@ -45,11 +45,13 @@ def find_light_type():
 
 	resultLdr = board.analog_read(ldrPin)
 	
-	if resultLdr and 0 <= resultLdr[0] < 450:
+	if resultLdr and resultLdr[0] is not None and 0 <= resultLdr[0] < 450:
 		print("Night time detected")
+		board.digital_write(Fl, 1)
 		return "night"
 	else:
 		print("Day time detected")
+		board.digital_write(Fl, 0)
 		return "day"
 
 def overheight_exit_subsystem():
@@ -62,7 +64,6 @@ def overheight_exit_subsystem():
     RETURNS:
     None
     """
-
 
 	recentReadings = []
 	tolerance = 3
@@ -79,6 +80,7 @@ def overheight_exit_subsystem():
 			if resultUs and 2 <= resultUs[0] <= 100:
 				distance = resultUs[0]
 				recentReadings.append(distance)
+
 				
 				if len(recentReadings) > 5:
 					recentReadings.pop(0)
@@ -90,13 +92,8 @@ def overheight_exit_subsystem():
 					if not objectDetected:
 						print("Overheight vehicle detected")
 						objectDetected = True
-							
+				
 						lightType = find_light_type()
-
-						if lightType == "night":
-							board.digital_write(Fl, 1)
-						elif lightType == "day":
-							board.digital_write(Fl, 0)
 						
 						board.digital_write(greenLightPin, 0)
 						board.digital_write(yellowLightPin, 1)
@@ -112,25 +109,19 @@ def overheight_exit_subsystem():
 							resultUs = board.sonar_read(triggerPin)
 							if not resultUs or resultUs[0] > 100:
 								print ("No object detected")	
-								board.digital_write(Fl, 0)
 								objectDetected = False
 								break
+							else:
+								print("Object still detected")
+								board.digital_write(greenLightPin, 1)
+								board.digital_write(yellowLightPin, 0)
+								board.digital_write(redLightPin, 0)
+								time.sleep(1/2)
+
+								board.digital_write(greenLightPin, 0)
+								time.sleep(1/2)
 								
-							lightType = find_light_type()
-
-							if lightType == "night":
-								board.digital_write(Fl, 1)
-							elif lightType == "day":
-								board.digital_write(Fl, 0)
-
-							print("Object still detected")
-							board.digital_write(greenLightPin, 1)
-							board.digital_write(yellowLightPin, 0)
-							board.digital_write(redLightPin, 0)
-							time.sleep(1/2)
-
-							board.digital_write(greenLightPin, 0)
-							time.sleep(1/2)
+	
 
 				else: 
 					time.sleep(0.01)
@@ -140,6 +131,7 @@ def overheight_exit_subsystem():
 				board.digital_write(greenLightPin, 0)
 				board.digital_write(yellowLightPin, 0)
 				board.digital_write(redLightPin, 1)
+				board.digital_write(Fl, 0)
 				time.sleep(1)
 				print("No object detected")
 		
