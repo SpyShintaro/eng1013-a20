@@ -1,18 +1,19 @@
 from modules import utils
 import time
 
-state = {
-    "run": True,
-    "phase": 0,
+state = { # Stores information about the subsystem's current progress
+    "phase": 0, # What stage of the program the subsytem
     "clock": 0
 }
 
 def execute(inputs, register):
     match state["phase"]:
 
+        # Initial Phase
         case 0:
             if time.time() >= state["clock"]:
                 if inputs["PB1"]:
+                    print("crossing")
                     utils.change_light(register["TL4"], "Y")
                     state["phase"], state["clock"] = 1, utils.sleep(2) # This just saves space by assigning two variables at the same time (i.e. state["phase"] = 1)
                     
@@ -31,3 +32,14 @@ def execute(inputs, register):
                 state["phase"], state["clock"] = 0, utils.sleep(15)
 
                 print(register["TL4"])
+
+def integration(inputs, register):
+    if inputs["us1"]:
+        return {
+            "s1": True,
+            "s2": True,
+            "s3": True,
+            "s4": True
+        }
+        pass # Whatever code for the integration
+        
