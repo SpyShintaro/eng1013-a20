@@ -81,7 +81,11 @@ def ulstrasonic_sensor1_dependent():
     #universal variables
     result=[]
     while True:
-        time.sleep(0.2)
+        
+        endtime = sleep(0.2)
+        while True:
+            if time.time() >= endtime:
+                break
 
         result=board.sonar_read(triggerPin)#read from the US1
 
@@ -126,6 +130,8 @@ def traffic_light_system1():
     board.digital_pin_write(redLightPin2, 0)
     board.digital_pin_write(greenLightPin2, 1)
 
+"""
+
 def warning_lights_alert_buzzer_system1(a,b):
     frequency = a
     duration = b
@@ -134,11 +140,65 @@ def warning_lights_alert_buzzer_system1(a,b):
         board.digital_pin_write(warningLightPin1, 1)
         board.digital_pin_write(warningLightPin2, 0)
         board.digital_pin_write(buzzerPin,1)
-        time.sleep(timeBetweenFlashes/2)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
         board.digital_pin_write(warningLightPin2, 1)
         board.digital_pin_write(warningLightPin1, 0)
-        board.digital_pin_write(buzzerPin,0)  
-        time.sleep(timeBetweenFlashes/2)
+        board.digital_pin_write(buzzerPin,0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+
+"""
+
+def warning_lights_system1(a,b):
+    frequency = a
+    duration = b
+    timeBetweenFlashes = 1/frequency
+    for _ in range(int(duration*frequency)):
+        board.digital_pin_write(warningLightPin1, 1)
+        board.digital_pin_write(warningLightPin2, 0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+        board.digital_pin_write(warningLightPin2, 1)
+        board.digital_pin_write(warningLightPin1, 0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+
+def buzzer_system1(a,b):
+    frequency = a
+    duration = b
+    timeBetweenBuzzes = 1/frequency
+    for _ in range(int(duration*frequency)):
+        board.digital_pin_write(buzzerPin,1)
+        endtime = sleep(timeBetweenBuzzes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+        board.digital_pin_write(buzzerPin,0)
+        endtime = sleep(timeBetweenBuzzes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+
+def sleep(duration: float) -> float:
+    """
+    Function for assigning soft delay in between processes
+
+    PARAMETERS:
+    duration: Time in seconds of delay
+
+    RETURN:
+    endTime: The time at which the process should resume
+    """
+    return time.time() + duration
 
 while True:
     try: 
