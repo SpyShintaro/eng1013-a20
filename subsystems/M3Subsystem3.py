@@ -45,7 +45,7 @@ def find_light_type():
 
 	resultLdr = board.analog_read(ldrPin)
 	
-	if resultLdr and 0 <= resultLdr[0] < 200:
+	if resultLdr and 0 <= resultLdr[0] < 450:
 		print("Night time detected")
 		return "night"
 	else:
