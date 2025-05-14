@@ -8,7 +8,7 @@ def get_inputs() -> dict:
         "PB1": True,
         "US1": False,
         "US2": False,
-        "US3": False
+        "US3": True
     }
 
 def handle_outputs():
