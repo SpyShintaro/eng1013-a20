@@ -1,7 +1,7 @@
 from pymata4 import pymata4
 import time
 
-from modules import utils, s2
+from modules import utils, s2,s1
 
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
@@ -82,7 +82,7 @@ def main():
 
             # Requirements and General Features
             if run["s1"]:
-                pass # Call subsystem 1 code
+                s1.execute(inputs, [shiftReg1, shiftReg3]) #Executes subsystem 1 code
 
             if run["s2"]:
                 s2.execute(inputs, shiftReg2) # Executes subsystem 2

@@ -15,7 +15,7 @@ def handle_outputs():
     pass
 
 # High Level Functions
-def sleep(duration: float) -> float:
+def sleep(duration: float) -> float: 
     """
     Function for assigning soft delay in between processes
 

@@ -5,6 +5,7 @@
 #M2 Subsystem 1: Approach Height Detection Subsystem. 
 from pymata4 import pymata4
 import time
+from utils import *
 
 board = pymata4.Pymata4()
 
@@ -157,6 +158,9 @@ def warning_lights_alert_buzzer_system1(a,b):
         while True:
             if time.time() >= endtime:
                 break
+                
+                while warninglights_system1(5,1){  
+                buzzer_system1(5,1)}
 
 """
 
