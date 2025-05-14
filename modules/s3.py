@@ -40,3 +40,13 @@ def execute(inputs, register):
                 state["phase"] = 0
                 state["clock"] = 0
                 print(f"\033[0;91;49mTL5\033[0m: {register['TL5']}")
+        
+        case 3:
+            if time.time() >= state["clock"]:
+                if inputs["US3"]:
+                    startTime = time.time()
+                    state["phase"] = 4
+                    
+        case 4:
+            if time.time() >= state["clock"]:
+                pass

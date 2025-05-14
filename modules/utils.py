@@ -44,3 +44,44 @@ def change_light(lightSet: dict, lightPin: str):
             lightSet[light] = 1
         else:
             lightSet[light] = 0
+
+def flash_light(lightSet: dict, lightPin: str, interval: int, length: int, startTime=0, timeCheck=0, phase=0, clock=0):
+    """
+    PARAMATERS:
+    lightSet -> The set of output LEDs to be modified
+    lightPin -> The LED within lightSet to be flashed on and off
+    interval -> The amount of time in ms that the Arduino will wait between each change in state
+    length -> The time in seconds that the function will run
+
+    RETURNS:
+    None
+    """
+
+    for light in lightSet: # Turns off all LEDs in light set
+        lightSet[light] = 0
+    
+    if startTime == 0:
+        startTime = time.time()
+
+
+    if time.time() - startTime <= length: # Checks to make sure the function hasn't been running longer than the given length
+        match phase:
+            case 0:
+                if clock <= time.time():
+                    lightSet[lightPin] = 1
+                    clock = sleep(interval/1000)
+                    phase = 1
+                
+            
+            case 1:
+                if clock <= time.time():
+                    lightSet[lightPin] = 0
+                    clock = sleep(interval / 1000)
+                    phase = 0
+        
+        return {
+            "start": startTime,
+            "time": timeCheck,
+            "phase": phase,
+            "clock": clock
+        }

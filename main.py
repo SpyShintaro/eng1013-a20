@@ -65,7 +65,7 @@ def setup():
     
     # Initialize main loop
     time.sleep(0.001)
-    main()
+    main() 
 
 def main():
     
