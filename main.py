@@ -1,6 +1,7 @@
-from subsystems import tunnel_ave_subsytem as s2
 from pymata4 import pymata4
 import time
+
+from modules import utils, s2
 
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
@@ -22,8 +23,7 @@ shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
     },
 
 }
-
-shiftReg2 = {
+shiftReg2 = { # TL4, TL5, PL1
     "TL4": {
         "R": 0,
         "Y": 0,
@@ -41,8 +41,7 @@ shiftReg2 = {
         "G": 0
     },
 }
-
-shiftReg3 = {
+shiftReg3 = { # Everything Else
     "PA1": 0,
     "WL1": 0,
     "WL2": 0,
@@ -50,6 +49,13 @@ shiftReg3 = {
     "US1": 0,
     "US2": 0,
     "US3": 0
+}
+
+run = {
+    "s1": True,
+    "s2": True,
+    "s3": True,
+    "s4": True
 }
 
 def setup():
@@ -62,50 +68,36 @@ def setup():
     main()
 
 def main():
+    
     while True:
         try:
-            # Run Base Functions (most integration functions overwrite base functionality)?
-            runS1 = True
-            runS2 = True
-            runS3 = True
-            runS4 = True
-            runs5 = True
+
+            # Get Inputs
+            inputs = utils.get_inputs() # <- Testing for pushbutton being pressed
 
             # Handle Integration Features First
 
+            # Code to decide
+
 
             # Requirements and General Features
-            pass
+            if run["s1"]:
+                pass # Call subsystem 1 code
+
+            if run["s2"]:
+                s2.execute(inputs, shiftReg2) # Executes subsystem 2
+            
+            if run["s3"]:
+                pass # Call subsytem 3
+
+            if run["s4"]:
+                pass # Call subsystem 4
         
         except KeyboardInterrupt as e:
             print('Ending Program')
-            board.shutdown()
+            #board.shutdown()
             raise e
-    
-def get_inputs() -> dict:
-    # Reads all inputs from the R-2R Ladder
-    return {
-        "PB1": False,
-        "US1": False,
-        "US2": False,
-        "US3": False
-    }
-
-def sleep(duration: float) -> float:
-    """
-    Function for assigning soft delay in between processes
-
-    PARAMETERS:
-    duration: Time in seconds of delay
-
-    RETURN:
-    endTime: The time at which the process should resume
-    """
-    return time.time() + duration
-
-
-def handle_outputs():
-    pass
 
 if __name__ == "__main__":
-    board = pymata4.Pymata4()
+    #board = pymata4.Pymata4()
+    setup()
