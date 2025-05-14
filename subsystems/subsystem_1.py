@@ -5,6 +5,7 @@
 #M2 Subsystem 1: Approach Height Detection Subsystem. 
 from pymata4 import pymata4
 import time
+
 board = pymata4.Pymata4()
 
 #global variables:
