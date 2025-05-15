@@ -2,9 +2,8 @@ from modules import utils
 import time
 
 state = { # Stores information about the subsystem's current progress
-    "phase": 0, # What stage of the program the subsytem
+    "phase": 0, # What stage of the program the subsytem is currently at
     "clock": 0,
-    "p-clock": 0,
 
     "flashing": {
         "start": 0,
