@@ -39,7 +39,8 @@ def execute(inputs, register):
         case 2:
             if time.time() >= state["clock"]:
                 state["phase"] = 3
-                state["clock"] = utils.sleep(2) # Sets the clock for the pedestrian timer
+                state["clock"] = utils.sleep(2)
+                utils.change_light(register["PL1"], "R")
 
                 state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5)
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
@@ -47,13 +48,14 @@ def execute(inputs, register):
         case 3:
             if time.time() >= state["clock"]:
                 state["phase"] = 4
-                print("\033[0;92;49mPL1\033[0m stopped flashing")
             else:
                 state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
 
         case 4:
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "G")
+                
+                utils.change_light(register["PL1"], "R")
                 state["phase"], state["clock"] = 0, utils.sleep(15)
 
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")

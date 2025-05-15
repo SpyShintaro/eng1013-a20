@@ -29,7 +29,7 @@ shiftReg2 = { # TL4, TL5, PL1
     "TL4": {
         "R": 0,
         "Y": 0,
-        "G": 0
+        "G": 1
     },
 
     "TL5": {
@@ -39,7 +39,7 @@ shiftReg2 = { # TL4, TL5, PL1
     },
 
     "PL1": {
-        "R": 0,
+        "R": 1,
         "G": 0
     },
 }
@@ -75,7 +75,10 @@ def main():
         try:
 
             # Get Inputs
-            inputs = utils.get_inputs() # <- Testing for pushbutton being pressed
+            if not debug:
+                inputs = utils.get_inputs(False, board)
+            else:
+                inputs = utils.get_inputs(True)
 
             # Handle Integration Features First
 
@@ -96,17 +99,28 @@ def main():
                 pass # Call subsystem 4
             
             if not debug:
-                utils.handle_outputs(shiftReg2)
+                utils.handle_outputs(board, shiftReg2)
+                time.sleep(0.001) # Leave this in or the Arduino freaks tf out
         
         except KeyboardInterrupt as e:
             print('Ending Program')
-            #board.shutdown()
+            board.shutdown()
             raise e
 
 def setup():
+    """
+    Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
+    """
+    board.set_pin_mode_digital_output(2)
     board.set_pin_mode_digital_output(3)
     board.set_pin_mode_digital_output(4)
-    board.set_pin_mode_digital_output(5)
+    
+    board.set_pin_mode_digital_output(6)
+    board.set_pin_mode_digital_output(7)
+
+    board.set_pin_mode_digital_input_pullup(12)
+
+    main()
 
 
 if __name__ == "__main__":
