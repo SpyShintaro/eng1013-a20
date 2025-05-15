@@ -1,9 +1,9 @@
 from pymata4 import pymata4
-import time, os
+import time
 
 from modules import utils, s2, s3, s4
 
-debug = False # False when the Arduino is connected
+debug = True # False when the Arduino is connected
 
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
@@ -101,7 +101,7 @@ def main():
                 s4.execute(inputs, shiftReg1, shiftReg3)
             
             if not debug:
-                utils.handle_outputs(board, shiftReg3)
+                utils.handle_outputs(board, shiftReg1, shiftReg2, shiftReg3)
                 time.sleep(0.001) # Leave this in or the Arduino freaks tf out
         
         except KeyboardInterrupt as e:
@@ -113,14 +113,16 @@ def setup():
     """
     Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
     """
-    """ board.set_pin_mode_digital_output(2)
-    board.set_pin_mode_digital_output(3)
-    board.set_pin_mode_digital_output(4) """
+    
+    board.set_pin_mode_digital_output(2) # TL3 Red
+    # board.set_pin_mode_digital_output(3)
+    board.set_pin_mode_digital_output(4) # TL3 Green
     
     board.set_pin_mode_digital_output(6) # WL1
     board.set_pin_mode_digital_output(7) # WL2
 
-    # board.set_pin_mode_digital_input_pullup(12)
+    board.set_pin_mode_digital_input_pullup(12)
+    # board.set_pin_mode_sonar(9, 8, timeout=10000000)
 
     main()
 

@@ -3,28 +3,38 @@ from pymata4 import pymata4
 
 # Low Level Functions
 def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
-    if not debug:
+    """ Debugging for Subsystem 2
+     if not debug:
         pb1 = True if board.digital_read(12)[0] == 0 else False
     else:
-        pb1 = True
+        pb1 = True """
+    
+    pb1 = True
+    
+    if not debug:
+        us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
+
+        # us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
+    else:
+        us2 = False
     
     return {
-        "PB1": False,
+        "PB1": pb1,
         "US1": False,
-        "US2": True,
+        "US2": us2,
         "US3": False
     }
 
-def handle_outputs(board: pymata4.Pymata4, register: dict):
-    """ board.digital_write(2, register["TL4"]["R"])
-    board.digital_write(3, register["TL4"]["Y"])
-    board.digital_write(4, register["TL4"]["G"])
+def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict):
+    board.digital_write(2, register1["TL3"]["R"])
+    # board.digital_write(3, register["TL4"]["Y"])
+    board.digital_write(4, register1["TL3"]["G"])
 
-    board.digital_write(6, register["PL1"]["G"])
+    """ board.digital_write(6, register["PL1"]["G"])
     board.digital_write(7, register["PL1"]["R"]) """
 
-    board.digital_write(6, register["WL"]["WL1"])
-    board.digital_write(7, register["WL"]["WL2"])
+    board.digital_write(6, register3["WL"]["WL1"])
+    board.digital_write(7, register3["WL"]["WL2"])
 
 # High Level Functions
 def sleep(duration: float) -> float:

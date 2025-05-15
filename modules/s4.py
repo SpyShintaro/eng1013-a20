@@ -28,12 +28,12 @@ def execute(inputs, traffic_register, warning_register):
     match state["phase"]:
         case 0: # No overheight vehicle detected
             if inputs["US2"]:
-                utils.change_light(traffic_register, "R")
+                utils.change_light(traffic_register["TL3"], "R")
                 state["phase"], state["clock"] = 1, utils.sleep(warning_interval)
                 print("Overheight vehicle detected")
             
             else:
-                utils.change_light(traffic_register, "G")
+                utils.change_light(traffic_register["TL3"], "G")
                 utils.kill_lights(warning_register["WL"])
         
         case 1: # Overheight vehicle detected: start flashing first warning light
