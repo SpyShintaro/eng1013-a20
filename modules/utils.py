@@ -1,18 +1,27 @@
 import time
+from pymata4 import pymata4
 
 # Low Level Functions
-def get_inputs() -> dict:
-    # Reads all inputs from the R-2R Ladder
+def get_inputs(debug: bool, board = 0) -> dict:
+    if not debug:
+        pb1 = True if board.digital_read(12)[0] == 0 else False
+    else:
+        pb1 = True
     
     return {
-        "PB1": True,
+        "PB1": pb1,
         "US1": False,
         "US2": False,
         "US3": True
     }
 
-def handle_outputs(register):
-    pass
+def handle_outputs(board: pymata4.Pymata4, register: dict):
+    board.digital_write(2, register["TL4"]["R"])
+    board.digital_write(3, register["TL4"]["Y"])
+    board.digital_write(4, register["TL4"]["G"])
+
+    board.digital_write(6, register["PL1"]["G"])
+    board.digital_write(7, register["PL1"]["R"])
 
 # High Level Functions
 def sleep(duration: float) -> float:
