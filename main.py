@@ -114,15 +114,15 @@ def setup():
     Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
     """
     
-    board.set_pin_mode_digital_output(2) # TL3 Red
+    board.set_pin_mode_digital_output(4) # TL3 Red
     # board.set_pin_mode_digital_output(3)
-    board.set_pin_mode_digital_output(4) # TL3 Green
+    board.set_pin_mode_digital_output(5) # TL3 Green
     
-    board.set_pin_mode_digital_output(6) # WL1
-    board.set_pin_mode_digital_output(7) # WL2
+    board.set_pin_mode_digital_output(10) # WL1
+    board.set_pin_mode_digital_output(11) # WL2
 
-    board.set_pin_mode_digital_input_pullup(12)
-    # board.set_pin_mode_sonar(9, 8, timeout=10000000)
+    #board.set_pin_mode_digital_input_pullup(12)
+    board.set_pin_mode_sonar(9, 8, timeout=10000000)
 
     main()
 
