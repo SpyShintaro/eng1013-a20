@@ -9,19 +9,22 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         pb1 = True
     
     return {
-        "PB1": pb1,
+        "PB1": False,
         "US1": False,
-        "US2": False,
-        "US3": True
+        "US2": True,
+        "US3": False
     }
 
 def handle_outputs(board: pymata4.Pymata4, register: dict):
-    board.digital_write(2, register["TL4"]["R"])
+    """ board.digital_write(2, register["TL4"]["R"])
     board.digital_write(3, register["TL4"]["Y"])
     board.digital_write(4, register["TL4"]["G"])
 
     board.digital_write(6, register["PL1"]["G"])
-    board.digital_write(7, register["PL1"]["R"])
+    board.digital_write(7, register["PL1"]["R"]) """
+
+    board.digital_write(6, register["WL"]["WL1"])
+    board.digital_write(7, register["WL"]["WL2"])
 
 # High Level Functions
 def sleep(duration: float) -> float:
@@ -53,6 +56,10 @@ def change_light(lightSet: dict, lightPin: str):
             lightSet[light] = 1
         else:
             lightSet[light] = 0
+
+def kill_lights(lightSet):
+    for light in lightSet:
+        lightSet[light] = 0
 
 def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase=0, clock=0.0):
     """
