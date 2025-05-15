@@ -2,7 +2,7 @@ import time
 from pymata4 import pymata4
 
 # Low Level Functions
-def get_inputs(debug: bool, board = 0) -> dict:
+def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     if not debug:
         pb1 = True if board.digital_read(12)[0] == 0 else False
     else:

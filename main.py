@@ -76,7 +76,7 @@ def main():
 
             # Get Inputs
             if not debug:
-                inputs = utils.get_inputs(False) # <- Testing for pushbutton being pressed
+                inputs = utils.get_inputs(False, board)
             else:
                 inputs = utils.get_inputs(True)
 
