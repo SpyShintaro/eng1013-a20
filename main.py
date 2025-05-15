@@ -3,6 +3,8 @@ import time, os
 
 from modules import utils, s2, s3
 
+debug = True # False when the Arduino is connected
+
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
     "TL1": {
@@ -58,7 +60,7 @@ run = {
     "s4": True
 }
 
-def setup():
+def debug_setup():
     # Configure Input Pins
 
     # Configure Output Pins
@@ -92,12 +94,24 @@ def main():
 
             if run["s4"]:
                 pass # Call subsystem 4
+            
+            if not debug:
+                utils.handle_outputs(shiftReg2)
         
         except KeyboardInterrupt as e:
             print('Ending Program')
             #board.shutdown()
             raise e
 
+def setup():
+    board.set_pin_mode_digital_output(3)
+    board.set_pin_mode_digital_output(4)
+    board.set_pin_mode_digital_output(5)
+
+
 if __name__ == "__main__":
-    #board = pymata4.Pymata4()
-    setup()
+    if not debug:
+        board = pymata4.Pymata4()
+        setup()
+    else:
+        debug_setup()

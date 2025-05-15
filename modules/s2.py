@@ -3,7 +3,14 @@ import time
 
 state = { # Stores information about the subsystem's current progress
     "phase": 0, # What stage of the program the subsytem
-    "clock": 0
+    "clock": 0,
+    "p-clock": 0,
+
+    "flashing": {
+        "start": 0,
+        "phase": 0,
+        "clock": 0,
+    }
 }
 
 def execute(inputs, register):
@@ -22,11 +29,29 @@ def execute(inputs, register):
         case 1:
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "R")
-                state["phase"], state["clock"] = 2, utils.sleep(5)
+                utils.change_light(register["PL1"], "G")
+
+                state["phase"], state["clock"] = 2, utils.sleep(3)
 
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
+                print(f"\033[0;92;49mPL1\033[0m: {register['PL1']}")
         
         case 2:
+            if time.time() >= state["clock"]:
+                state["phase"] = 3
+                state["clock"] = utils.sleep(2) # Sets the clock for the pedestrian timer
+
+                state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5)
+                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
+        
+        case 3:
+            if time.time() >= state["clock"]:
+                state["phase"] = 4
+                print("\033[0;92;49mPL1\033[0m stopped flashing")
+            else:
+                state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
+
+        case 4:
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "G")
                 state["phase"], state["clock"] = 0, utils.sleep(15)
