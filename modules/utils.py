@@ -4,6 +4,8 @@ from pymata4 import pymata4
 # Low Level Functions
 def get_inputs() -> dict:
     # Reads all inputs from the R-2R Ladder
+    pb1 = board.digitalRead()
+    
     return {
         "PB1": True,
         "US1": False,

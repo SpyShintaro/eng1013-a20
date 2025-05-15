@@ -32,14 +32,3 @@ def execute(inputs, register):
                 state["phase"], state["clock"] = 0, utils.sleep(15)
 
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
-
-def integration(inputs, register):
-    if inputs["us1"]:
-        return {
-            "s1": True,
-            "s2": True,
-            "s3": True,
-            "s4": True
-        }
-        pass # Whatever code for the integration
-        
