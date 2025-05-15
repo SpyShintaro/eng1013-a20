@@ -1,9 +1,9 @@
 import time
-from pymata4 import pymata4
 
 # Low Level Functions
 def get_inputs() -> dict:
     # Reads all inputs from the R-2R Ladder
+    
     return {
         "PB1": True,
         "US1": False,
@@ -11,7 +11,7 @@ def get_inputs() -> dict:
         "US3": True
     }
 
-def handle_outputs():
+def handle_outputs(register):
     pass
 
 # High Level Functions
@@ -45,43 +45,47 @@ def change_light(lightSet: dict, lightPin: str):
         else:
             lightSet[light] = 0
 
-def flash_light(lightSet: dict, lightPin: str, interval: int, length: int, startTime=0, timeCheck=0, phase=0, clock=0):
+def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase=0, clock=0.0):
     """
     PARAMATERS:
     lightSet -> The set of output LEDs to be modified
     lightPin -> The LED within lightSet to be flashed on and off
-    interval -> The amount of time in ms that the Arduino will wait between each change in state
-    length -> The time in seconds that the function will run
+    interval -> The amount of time in s that the Arduino will wait between each change in state
+    
+    These parameters have default values. The first time you call this function leave these blank so the program knows you only just started flashing the lights
+
+    startTime (int) = 0 -> Time that the function was first called
+    phase (int) = 0 -> Current state of the function
+    clock (float) = 0.0 -> Time when function next needs to change state
 
     RETURNS:
     None
     """
-
-    for light in lightSet: # Turns off all LEDs in light set
-        lightSet[light] = 0
     
     if startTime == 0:
         startTime = time.time()
+        clock = sleep(interval)
 
 
-    if time.time() - startTime <= length: # Checks to make sure the function hasn't been running longer than the given length
-        match phase:
-            case 0:
-                if clock <= time.time():
-                    lightSet[lightPin] = 1
-                    clock = sleep(interval/1000)
-                    phase = 1
-                
-            
-            case 1:
-                if clock <= time.time():
-                    lightSet[lightPin] = 0
-                    clock = sleep(interval / 1000)
-                    phase = 0
-        
-        return {
-            "start": startTime,
-            "time": timeCheck,
-            "phase": phase,
-            "clock": clock
-        }
+    match phase:
+        case 0:
+
+            if clock <= time.time():
+                clock = sleep(interval)
+                phase = 1
+            else:
+                lightSet[lightPin] = 1
+                    
+        case 1:
+
+            if clock <= time.time():
+                clock = sleep(interval)
+                phase = 0
+            else:
+                lightSet[lightPin] = 0
+    
+    return {
+        "start": startTime,
+        "phase": phase,
+        "clock": clock
+    }
