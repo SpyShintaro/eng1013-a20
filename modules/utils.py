@@ -3,13 +3,11 @@ from pymata4 import pymata4
 
 # Low Level Functions
 def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
-    """ Debugging for Subsystem 2
-     if not debug:
+    # Debugging for Subsystem 2
+    if not debug:
         pb1 = True if board.digital_read(12)[0] == 0 else False
     else:
-        pb1 = True """
-    
-    pb1 = False
+        pb1 = True
     
     if not debug:
         #us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
@@ -17,17 +15,19 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
     else:
         us2 = False
+
+    us3 = False
     
     return {
         "PB1": pb1,
         "US1": False,
         "US2": us2,
-        "US3": False
+        "US3": us3
     }
 
 def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict):
     board.digital_write(4, register1["TL3"]["R"]) # TL3 Red
-    # board.digital_write(3, register["TL4"]["Y"])
+    #board.digital_write(5, register1["TL3"]["Y"]) # TL
     board.digital_write(5, register1["TL3"]["G"]) # TL3 Green
 
     """ board.digital_write(6, register["PL1"]["G"])
@@ -35,6 +35,25 @@ def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, reg
 
     board.digital_write(10, register3["WL"]["WL1"]) # WL 1
     board.digital_write(11, register3["WL"]["WL2"]) # WL 2
+
+def save_reg(*regs):
+    savedRegs = []
+    for reg in regs: # Each shiftRegister dictionary
+        savedReg = {}
+        for pinset in reg: # Checks the pinset variables: like TL4 = {} or FL1 = 0
+            if type(reg[pinset]) is dict: # When pinset is a nested dict like TL4
+                pins = {}
+                for pin in reg[pinset]:
+                    pins[pin] = reg[pinset][pin] 
+                
+                savedReg[pinset] = pins
+            else: # When pinset is a single pin like FL1
+                savedReg[pinset] = reg[pinset]
+        
+        savedRegs.append(savedReg)
+    
+    return savedRegs
+    
 
 # High Level Functions
 def sleep(duration: float) -> float:

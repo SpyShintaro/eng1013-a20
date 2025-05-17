@@ -30,7 +30,6 @@ def execute(inputs, traffic_register, warning_register):
             if inputs["US2"]:
                 utils.change_light(traffic_register["TL3"], "R")
                 state["phase"], state["clock"] = 1, utils.sleep(warning_interval)
-                print("Overheight vehicle detected")
             
             else:
                 utils.change_light(traffic_register["TL3"], "G")

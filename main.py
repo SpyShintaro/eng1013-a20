@@ -72,12 +72,16 @@ def debug_setup():
     main() 
 
 def main():
+
+    oldReg1, oldReg2, oldReg3 = shiftReg1, shiftReg2, shiftReg3 # Comparison
     
     while True:
         try:
 
+            # print(f"Previous: {currentReg3['WL']}")
+
             # Get Inputs
-            if not debug:
+            if not debug: # When Arduinois connected, we need to tell the function we're not debugging, and give it our board variable
                 inputs = utils.get_inputs(False, board)
             else:
                 inputs = utils.get_inputs(True)
@@ -104,6 +108,8 @@ def main():
                 utils.handle_outputs(board, shiftReg1, shiftReg2, shiftReg3)
                 time.sleep(0.001) # Leave this in or the Arduino freaks tf out
         
+            # print(f"Current: {shiftReg3['WL']}")
+        
         except KeyboardInterrupt as e:
             print('Ending Program')
             board.shutdown()
@@ -114,14 +120,14 @@ def setup():
     Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
     """
     
-    board.set_pin_mode_digital_output(4) # TL3 Red
-    # board.set_pin_mode_digital_output(3)
-    board.set_pin_mode_digital_output(5) # TL3 Green
+    board.set_pin_mode_digital_output(6) # TL4 Red
+    board.set_pin_mode_digital_output(5) # TL4 Yellow
+    board.set_pin_mode_digital_output(4) # TL4 Green
     
     board.set_pin_mode_digital_output(10) # WL1
     board.set_pin_mode_digital_output(11) # WL2
 
-    #board.set_pin_mode_digital_input_pullup(12)
+    board.set_pin_mode_digital_input_pullup(12)
     board.set_pin_mode_sonar(9, 8, timeout=10000000)
 
     main()
