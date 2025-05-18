@@ -3,6 +3,7 @@
 #Created Date: 14 May 2025
 #Version: 2.0
 from pymata4 import pymata4
+from modules import utils
 import time
 import math 
 board = pymata4.Pymata4()
@@ -37,9 +38,11 @@ def warning_light(a):
     board.digital_write(warningLightPin1, 1)
     board.digital_write(warningLightPin2, 0)
     time.sleep(timeBetweenFlash)
+    #utils.sleep(timeBetweenFlash)
     board.digital_write(warningLightPin1, 0)
     board.digital_write(warningLightPin2, 1) 
-    #time.sleep(timeBetweenFlash)       
+    time.sleep(timeBetweenFlash)
+    #utils.sleep(timeBetweenFlash)       
 
 def tunnel_height_detection_subsystem():
     """

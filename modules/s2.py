@@ -17,21 +17,21 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                     utils.change_light(register["TL4"], "Y")
                     state["phase"], state["clock"] = 1, utils.sleep(2) # This just saves space by assigning two variables at the same time (i.e. state["phase"] = 1)
                     
-                    print(register["TL4"])
+                    print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
 
         case 1:# This is the second phase
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "R")
                 state["phase"], state["clock"] = 2, utils.sleep(5)
 
-                print(register["TL4"])
+                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
         
         case 2:# This is the third phase
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "G")
                 state["phase"], state["clock"] = 0, utils.sleep(15)
 
-                print(register["TL4"])
+                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
 
 def integration(inputs, register):
     if inputs["us1"]:
