@@ -3,20 +3,22 @@ from pymata4 import pymata4
 
 BIT_ORDER = [
     "TL4 R", "TL4 Y", "TL4 G",
-    "TL5 R", "TL5 Y", "TL5, G"
-    "PB1 R", "PB1 G"
+    "TL5 R", "TL5 Y", "TL5 G",
+    "PL1 R", "PL1 G"
 ]
 
 # Low Level Functions
 def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     # Debugging for Subsystem 2
     if not debug:
-        pb1 = True if board.digital_read(12)[0] == 0 else False
+        pb = board.analog_read(0)[0]
+        print(pb)
+        pb1 = True if pb < 600 else False
     else:
         pb1 = True
     
     if not debug:
-        #us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
+        # us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
 
         us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
     else:
@@ -42,7 +44,6 @@ def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, reg
     """ board.digital_write(10, register3["WL"]["WL1"]) # WL 1
     board.digital_write(11, register3["WL"]["WL2"]) # WL 2 """
 
-    print(register2)
 
     write_reg(board, pinSet, register2)
 
@@ -59,31 +60,40 @@ def clear_register(board: pymata4.Pymata4, clearPin: int):
     time.sleep(0.01)
 
 def write_reg(board: pymata4.Pymata4, pinSet: dict, reg: dict):
-    """
-    Outputs state of every output pin to the shift registers
-    """
-    DATA_PIN = pinSet["outputs"]["SER1"] # SER (Data pin)
-    CLEAR_PIN = pinSet["outputs"]["SRCLR"] # SRCLR (Clears the shift register when pin is LOW)
-    CLOCK_PIN = pinSet["outputs"]["SRCLK"] # SRCLK (Pushes value of data pin into the shift register, kind of like a queue)
-    LATCH_PIN = pinSet["outputs"]["RCLK"] # RCLK (When HIGH, copies values in shift register to outputs)
+    DATA_PIN = pinSet["outputs"]["SER1"]
+    CLEAR_PIN = pinSet["outputs"]["SRCLR"]
+    CLOCK_PIN = pinSet["outputs"]["SRCLK"]
+    LATCH_PIN = pinSet["outputs"]["RCLK"]
 
-    register = flatten_dict(reg) # Converts shiftReg to a one dimensional dict (removes TL1, TL2, TL3... shell from our LED pins)
+    start = time.time()
+
+    register = flatten_dict(reg)
     
     bits = [register.get(k, 0) for k in BIT_ORDER]
-    bits = list(reversed(bits))  # MSB first
-    print(bits)
+    bits = list(reversed(bits))  # Optional: only if wiring expects MSB first
 
-    board.digital_write(LATCH_PIN, 0)      # Disable latch
-    time.sleep(0.001)
+    # print("Writing bits:", bits)
 
+    # Reset all lines to a known state
+    board.digital_write(CLEAR_PIN, 1)
+    board.digital_write(LATCH_PIN, 0)
+    board.digital_write(DATA_PIN, 0)
+    time.sleep(0.0001)
+
+    # Shift out bits
     for bit in bits:
+        start = time.time()
         board.digital_write(DATA_PIN, bit)
-        print("writing", bit, "to pin")
-        pulse(board, CLOCK_PIN)
 
-    board.digital_write(DATA_PIN, 0)       # Cleanup data line
-    board.digital_write(LATCH_PIN, 1)      # Latch the output
-    time.sleep(0.001)
+        board.digital_write(CLOCK_PIN, 1)
+        time.time()
+        board.digital_write(CLOCK_PIN, 0)
+
+    # Latch the outputs
+    board.digital_write(LATCH_PIN, 1)
+    time.sleep(0.0001)
+    board.digital_write(LATCH_PIN, 0)
+
 
 
 # High Level Functions

@@ -6,9 +6,7 @@ from modules import utils, s2, s3, s4
 debug = False # False when the Arduino is connected
 
 pinSet = {
-    "inputs": {
-        "PB1": 13
-    },
+    "inputs": {},
 
     "outputs": {
         "SRCLR": 2,
@@ -132,13 +130,19 @@ def setup():
     """
     Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
     """
-    
+
+    inputs = pinSet["inputs"]
     outputs = pinSet["outputs"]
     for pin in outputs:
         board.set_pin_mode_digital_output(outputs[pin])
 
-    board.set_pin_mode_digital_input_pullup(pinSet["inputs"]["PB1"])
+    for pin in inputs:
+        board.set_pin_mode_digital_input(inputs[pin])
+
+    board.set_pin_mode_analog_input(0) # This will be the pin connected to PB1
     board.set_pin_mode_sonar(9, 8, timeout=10000000)
+
+    time.sleep(0.1)
 
     main()
 
