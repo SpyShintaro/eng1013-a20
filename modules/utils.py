@@ -12,7 +12,6 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     # Debugging for Subsystem 2
     if not debug:
         pb = board.analog_read(0)[0]
-        print(pb)
         pb1 = True if pb < 600 else False
     else:
         pb1 = True
@@ -20,11 +19,11 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     if not debug:
         # us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
 
-        us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
+        us3 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
     else:
-        us2 = False
+        us3 = False
 
-    us3 = False
+    us2 = False
     
     return {
         "PB1": pb1,
@@ -45,7 +44,12 @@ def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, reg
     board.digital_write(11, register3["WL"]["WL2"]) # WL 2 """
 
 
-    write_reg(board, pinSet, register2)
+    test_outputs(board, register2)
+
+def test_outputs(board: pymata4.Pymata4, register):
+    board.digital_write(2, register["TL4"]["R"])
+    board.digital_write(3, register["TL4"]["Y"])
+    board.digital_write(4, register["TL4"]["G"])
 
 def pulse(board: pymata4.Pymata4, pin: int, delay=0.001):
     board.digital_write(pin, 1)
