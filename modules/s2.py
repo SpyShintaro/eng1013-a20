@@ -2,8 +2,14 @@ from modules import utils
 import time
 
 state = { # Stores information about the subsystem's current progress
-    "phase": 0, # What stage of the program the subsytem
-    "clock": 0
+    "phase": 0, # What stage of the program the subsytem is currently at
+    "clock": 0,
+
+    "flashing": {
+        "start": 0,
+        "phase": 0,
+        "clock": 0,
+    }
 }
 
 def execute(inputs, register): #function with 2 inputs: inputs and register(light)
@@ -22,24 +28,33 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
         case 1:# This is the second phase
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "R")
-                state["phase"], state["clock"] = 2, utils.sleep(5)
+                utils.change_light(register["PL1"], "G")
+
+                state["phase"], state["clock"] = 2, utils.sleep(3)
 
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
+                print(f"\033[0;92;49mPL1\033[0m: {register['PL1']}")
         
         case 2:# This is the third phase
             if time.time() >= state["clock"]:
+                state["phase"] = 3
+                state["clock"] = utils.sleep(2)
+                utils.change_light(register["PL1"], "R")
+
+                state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5)
+                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
+        
+        case 3:
+            if time.time() >= state["clock"]:
+                state["phase"] = 4
+            else:
+                state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
+
+        case 4:
+            if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "G")
+                
+                utils.change_light(register["PL1"], "R")
                 state["phase"], state["clock"] = 0, utils.sleep(15)
 
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
-
-def integration(inputs, register):
-    if inputs["us1"]:
-        return {
-            "s1": True,
-            "s2": True,
-            "s3": True,
-            "s4": True
-        }
-        pass # Whatever code for the integration
-        
