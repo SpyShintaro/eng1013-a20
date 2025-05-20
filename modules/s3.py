@@ -2,6 +2,7 @@ from modules import utils
 import time
 
 state = {
+    "US3": False,
     "phase": 0,
     "clock": 0,
     "start": 0,
@@ -22,8 +23,10 @@ def execute(inputs, register):
                     print("started check")
                     state["start"] = time.time()
                     state["phase"], state["clock"] = 0.5, utils.sleep(0.5)
+                else:
+                    state["US3"] = False
         
-        case 0.5:
+        case 0.5: # Noise filtering
             if time.time() >= state["clock"]:
                 if inputs["US3"]:
                     print("detected")
@@ -31,9 +34,9 @@ def execute(inputs, register):
                     state["phase"] = 1
                     state["clock"] = utils.sleep(2)
                     print(f"\033[0;91;49mTL5\033[0m: {register['TL5']}")
-                    print("check passed")
                 else:
                     state["phase"] = 0
+                    state["US3"] = False
                     print("check failed")
     
         case 1:
@@ -53,6 +56,7 @@ def execute(inputs, register):
                     utils.change_light(register["TL5"], "R")
                     state["phase"] = 0
                     state["clock"] = 0
+                    state["US3"] = False
                     print(f"\033[0;91;49mTL5\033[0m: {register['TL5']}")
         
         case 3:
@@ -60,4 +64,5 @@ def execute(inputs, register):
                 state["flashing"] = utils.flash_light(register["TL5"], "G", 0.5, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             else:
                 state["phase"] = 0
+                state["US3"] = False
                 print("overheight vehicle no longer detected")

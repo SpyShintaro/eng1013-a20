@@ -24,7 +24,7 @@ state = {
 
 warning_interval = 0.5
 
-def execute(inputs, traffic_register, warning_register):
+def execute(inputs, traffic_register, warning_register, run):
     match state["phase"]:
         case 0: # No overheight vehicle detected
             if inputs["US2"]:
@@ -58,3 +58,8 @@ def execute(inputs, traffic_register, warning_register):
                 state["flashing-2"] = utils.flash_light(warning_register["WL"], "WL2", warning_interval, state["flashing-2"]["start"], state["flashing-2"]["phase"], state["flashing-2"]["clock"])
             else:
                 state["phase"] = 0
+
+def integration(inputs, register, run):
+    if inputs["US2"]:
+        run["s2"] = False
+        utils.change_light(register["TL4"], "R")

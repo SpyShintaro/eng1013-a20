@@ -1,10 +1,21 @@
 import time
 from pymata4 import pymata4
 
-BIT_ORDER = [
+
+regOrder1 = [ # The order in which we write to each pin in the register
+    "TL1 R", "TL1 Y", "TL1 G",
+    "TL2 R", "TL2 Y", "TL2 G",
+    "TL3 R", "TL3 Y", "TL3 G"
+]
+regOrder2 = [
     "TL4 R", "TL4 Y", "TL4 G",
     "TL5 R", "TL5 Y", "TL5 G",
     "PL1 R", "PL1 G"
+]
+regOrder3 = [
+    "PA1", "WL WL1", "WL WL2",
+    "FL", "US1", "US2",
+    "US3", "None"
 ]
 
 # Low Level Functions
@@ -22,14 +33,15 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         us3 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
     else:
         us3 = False
+        us1 = True
 
     us2 = False
     
     return {
         "PB1": pb1,
         "US1": False,
-        "US2": us2,
-        "US3": us3
+        "US2": False,
+        "US3": True
     }
 
 def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict, pinSet: dict):
@@ -44,7 +56,7 @@ def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, reg
     board.digital_write(11, register3["WL"]["WL2"]) # WL 2 """
 
 
-    test_outputs(board, register2)
+    write_reg(board, pinSet, register1, register2, register3)
 
 def test_outputs(board: pymata4.Pymata4, register):
     board.digital_write(2, register["TL4"]["R"])
@@ -63,34 +75,42 @@ def clear_register(board: pymata4.Pymata4, clearPin: int):
     board.digital_write(clearPin, 1)  # back to normal
     time.sleep(0.01)
 
-def write_reg(board: pymata4.Pymata4, pinSet: dict, reg: dict):
-    DATA_PIN = pinSet["outputs"]["SER1"]
-    CLEAR_PIN = pinSet["outputs"]["SRCLR"]
+def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3: dict):
+
+    # Individual data pins for each register (basically sending 1 or 0)
+    dataReg1 = pinSet["outputs"]["SER1"]
+    dataReg2 = pinSet["outputs"]["SER2"]
+    dataReg3 = pinSet["outputs"]["SER3"]
+
+    # Pins that control all three registers
     CLOCK_PIN = pinSet["outputs"]["SRCLK"]
     LATCH_PIN = pinSet["outputs"]["RCLK"]
 
-    start = time.time()
-
-    register = flatten_dict(reg)
-    
-    bits = [register.get(k, 0) for k in BIT_ORDER]
-    bits = list(reversed(bits))  # Optional: only if wiring expects MSB first
-
-    # print("Writing bits:", bits)
-
-    # Reset all lines to a known state
-    board.digital_write(CLEAR_PIN, 1)
     board.digital_write(LATCH_PIN, 0)
-    board.digital_write(DATA_PIN, 0)
-    time.sleep(0.0001)
+
+    reg1 = flatten_dict(reg1) # Removes all group names in each dict (like "TL1", which doesn't refer to just one pin)
+    reg2 = flatten_dict(reg2)
+    reg3 = flatten_dict(reg3)
+    
+    bits1 = [reg1.get(k, 0) for k in regOrder1]
+    bits1 = list(reversed(bits1))  # Shift Registers take inputs in reversed order
+
+    bits2 = [reg2.get(k, 0) for k in regOrder2]
+    bits2 = list(reversed(bits2))
+
+    bits3 = [reg3.get(k, 0) for k in regOrder3]
+    bits3 = list(reversed(bits3))
 
     # Shift out bits
-    for bit in bits:
-        start = time.time()
-        board.digital_write(DATA_PIN, bit)
-
+    for bit in range(8):
+        # This is where we write the current pin state to each shift register
+        board.digital_write(dataReg1, bits1[bit])
+        board.digital_write(dataReg2, bits2[bit])
+        board.digital_write(dataReg3, bits3[bit])
+        
+        # Tells all shift registers to move onto next pin
         board.digital_write(CLOCK_PIN, 1)
-        time.time()
+        time.sleep(0.01)
         board.digital_write(CLOCK_PIN, 0)
 
     # Latch the outputs
