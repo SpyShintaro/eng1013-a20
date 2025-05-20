@@ -20,8 +20,6 @@ def execute(inputs, register):
 
                 if inputs["US3"]:
                     
-                    
-                    
                     print("detected")
                     utils.change_light(register["TL5"], "Y")
                     state["phase"] = 1
