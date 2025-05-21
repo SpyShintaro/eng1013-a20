@@ -9,13 +9,7 @@ state = {
     "phase": 0,
     "clock": 0,
 
-    "flashing-1": { # Controls the first warning LED
-        "start": 0,
-        "phase": 0,
-        "clock": 0,
-    },
-
-    "flashing-2": { # Controls the second warning LED
+    "flashing": { # Controls the first warning LED
         "start": 0,
         "phase": 0,
         "clock": 0,
@@ -33,29 +27,15 @@ def execute(inputs, traffic_register, warning_register, run):
             
             else:
                 utils.change_light(traffic_register["TL3"], "G")
-                utils.kill_lights(warning_register["WL"])
+                utils.pin_off(warning_register, "WL1")
         
         case 1: # Overheight vehicle detected: start flashing first warning light
-            state["flashing-1"] = utils.flash_light(warning_register["WL"], "WL1", warning_interval)
+            state["flashing"] = utils.flash_light(warning_register, "WL2", warning_interval)
             state["phase"], state["clock"] = 2, utils.sleep(warning_interval)
         
-        case 2: # Overheight vehicle still detected: start flashing second warning light 0.5 seconds after first warning light
+        case 2: # Overheight vehicle detected: continue flashing both lights simultaneously
             if inputs["US2"]:
-                if time.time() >= state["clock"]:
-                    state["flashing-1"] = utils.flash_light(warning_register["WL"], "WL1", warning_interval, state["flashing-1"]["start"], state["flashing-1"]["phase"], state["flashing-1"]["clock"])
-                    state["flashing-2"] = utils.flash_light(warning_register["WL"], "WL2", warning_interval)
-
-                    state["phase"] = 3
-                else:
-                    state["flashing-1"] = utils.flash_light(warning_register["WL"], "WL1", warning_interval, state["flashing-1"]["start"], state["flashing-1"]["phase"], state["flashing-1"]["clock"])
-            
-            else:
-                state["phase"] = 0
-        
-        case 3: # Overheight vehicle detected: continue flashing both lights simultaneously
-            if inputs["US2"]:
-                state["flashing-1"] = utils.flash_light(warning_register["WL"], "WL1", warning_interval, state["flashing-1"]["start"], state["flashing-1"]["phase"], state["flashing-1"]["clock"])
-                state["flashing-2"] = utils.flash_light(warning_register["WL"], "WL2", warning_interval, state["flashing-2"]["start"], state["flashing-2"]["phase"], state["flashing-2"]["clock"])
+                state["flashing"] = utils.flash_light(warning_register, "WL2", warning_interval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             else:
                 state["phase"] = 0
 

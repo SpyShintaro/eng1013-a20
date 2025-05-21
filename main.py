@@ -3,10 +3,10 @@ import time
 
 from modules import utils, s1, s2, s3, s4
 
-debug = False
+debug = True # Set to False when we connect to Arduino
 
-pinSet = {
-    "inputs": {},
+pinSet = { # Determining our input and output pins
+    "inputs": {}, # Analog input pins
 
     "outputs": {
         "SRCLK": 3,
@@ -17,6 +17,7 @@ pinSet = {
     }
 }
 
+# Pin data for output nodes connected to shift registers
 shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
 
     "TL1": {
@@ -57,14 +58,12 @@ shiftReg2 = { # TL4, TL5, PL1
 }
 shiftReg3 = { # Everything Else
     "PA1": 0,
-    "WL":{
-        "WL1": 0,
-        "WL2": 0,
-    },
+    "WL1": 0,
+    "WL2": 0,
     "FL": 1,
-    "US1": 0,
-    "US2": 0,
-    "US3": 1,
+    "PA1 High": 0, # Activates a transistor that enables a higher frequency signal to the buzzer
+    "None": 0,
+    "None": 1,
     "None": 0
 }
 
@@ -84,21 +83,28 @@ def debug_setup():
     time.sleep(0.001)
     main() 
 
-def main():
+def main() -> None:
+    """
+    Main loop that iterates through each subsystem
+
+    PARAMETERS:
+    None
+
+    RETURNS:
+    None
+    """
     
     while True:
         try:
 
+            # Determines whether default behaviours are overriden
             run["s1"] = True
             run["s2"] = True
             run["s3"] = True
             run["s4"] = True
 
-
-            # print(f"Previous: {currentReg3['WL']}")
-
             # Get Inputs
-            if not debug: # When Arduinois connected, we need to tell the function we're not debugging, and give it our board variable
+            if not debug: # When Arduino is connected, we need to tell the function we're not debugging, and give it our board variable
                 inputs = utils.get_inputs(False, board)
             else:
                 inputs = utils.get_inputs(True)
@@ -106,12 +112,12 @@ def main():
             # Handle Integration Features First
             s4.integration(inputs, shiftReg2, run)
 
-            # Requirements and General Features
+            # Requirements and General Features (Default behaviour)
             if run["s1"]:
                 s1.execute(inputs, shiftReg1, shiftReg3)
 
             if run["s2"]:
-                s2.execute(inputs, shiftReg2) # Executes subsystem 2
+                s2.execute(inputs, shiftReg2)
             
             if run["s3"]:
                 s3.execute(inputs, shiftReg2, shiftReg3)
@@ -119,11 +125,8 @@ def main():
             if run["s4"]:
                 s4.execute(inputs, shiftReg1, shiftReg3, run)
             
-            if run["s2"]:
-                s2.execute(inputs, shiftReg2) # Executes subsystem 2
-            
             if not debug:
-                utils.handle_outputs(board, shiftReg1, shiftReg2, shiftReg3, pinSet)
+                utils.handle_outputs(board, shiftReg1, shiftReg2, shiftReg3, pinSet) # Sends all register and pin data
                 time.sleep(0.001) # Leave this in or the Arduino freaks tf out
         
             # print(f"Current: {shiftReg3['WL']}")
@@ -131,11 +134,17 @@ def main():
         except KeyboardInterrupt as e:
             print('Ending Program')
             board.shutdown()
-            raise e
+            exit()
 
-def setup():
+def setup() -> None:
     """
-    Gonna be the main setup function once everything is implemented, but for now I'm just using it for testing
+    Configures all pins on Arduino
+
+    PARAMETERS:
+    None
+
+    RETURNS:
+    None
     """
 
     inputs = pinSet["inputs"]
@@ -158,8 +167,8 @@ def setup():
 
 
 if __name__ == "__main__":
-    if not debug:
+    if not debug: # When Arduino is connected, we can set up Pymata4
         board = pymata4.Pymata4()
         setup()
-    else:
+    else: # Otherwise, run a code only version of the program
         debug_setup()

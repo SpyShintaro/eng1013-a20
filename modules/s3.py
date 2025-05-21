@@ -21,7 +21,6 @@ def execute(inputs, trafficRegister, lightsRegister):
             if time.time() >= state["clock"]:
                 utils.change_light(trafficRegister["TL5"], "R")
                 if inputs["US3"]:
-                    print("started check")
                     state["start"] = time.time()
                     state["phase"], state["clock"] = 0.5, utils.sleep(0.5)
                 else:
@@ -31,17 +30,13 @@ def execute(inputs, trafficRegister, lightsRegister):
         case 0.5: # Noise filtering
             if time.time() >= state["clock"]:
                 if inputs["US3"]:
-                    print("detected")
                     utils.change_light(trafficRegister["TL5"], "Y")
                     state["phase"] = 1
                     state["clock"] = utils.sleep(2)
-                    print(f"\033[0;91;49mTL5\033[0m: {trafficRegister['TL5']}")
 
                     if inputs["DS1"]:
-                        print("Turned Floodlights On")
                         utils.pin_on(lightsRegister, "FL")
                     else:
-                        print("Daylight")
                         utils.pin_off(lightsRegister, "FL")
                 else:
                     state["phase"] = 0
@@ -53,7 +48,6 @@ def execute(inputs, trafficRegister, lightsRegister):
                 utils.change_light(trafficRegister["TL5"], "G")
                 state["phase"] = 2
                 state["clock"] = utils.sleep(5)
-                print(f"\033[0;91;49mTL5\033[0m: {trafficRegister['TL5']}")
         
         case 2:
             if time.time() >= state["clock"]:
@@ -66,7 +60,6 @@ def execute(inputs, trafficRegister, lightsRegister):
                     state["phase"] = 0
                     state["clock"] = 0
                     state["US3"] = False
-                    print(f"\033[0;91;49mTL5\033[0m: {trafficRegister['TL5']}")
         
         case 3:
             if inputs["US3"]:
@@ -74,4 +67,3 @@ def execute(inputs, trafficRegister, lightsRegister):
             else:
                 state["phase"] = 0
                 state["US3"] = False
-                print("overheight vehicle no longer detected")

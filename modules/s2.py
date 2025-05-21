@@ -22,8 +22,6 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                     print("crossing")
                     utils.change_light(register["TL4"], "Y")
                     state["phase"], state["clock"] = 1, utils.sleep(2) # This just saves space by assigning two variables at the same time (i.e. state["phase"] = 1)
-                    
-                    print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
                 else:
                     utils.change_light(register["TL4"], "G")
 
@@ -33,9 +31,6 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                 utils.change_light(register["PL1"], "G")
 
                 state["phase"], state["clock"] = 2, utils.sleep(3)
-
-                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
-                print(f"\033[0;92;49mPL1\033[0m: {register['PL1']}")
         
         case 2:# This is the third phase
             if time.time() >= state["clock"]:
@@ -44,7 +39,6 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                 utils.change_light(register["PL1"], "R")
 
                 state["flashing"] = utils.flash_light(register["PL1"], "R", 0.5)
-                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
         
         case 3:
             if time.time() >= state["clock"]:
@@ -58,5 +52,3 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                 
                 utils.change_light(register["PL1"], "R")
                 state["phase"], state["clock"] = 0, utils.sleep(15)
-
-                print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
