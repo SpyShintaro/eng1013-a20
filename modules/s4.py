@@ -1,10 +1,9 @@
-#M2 Subsystem 4: Tunnel Height Detection Subsystem.
 #Created By: Jessica Hu
 #Created Date: 14 May 2025
 #Version: 2.0
 from pymata4 import pymata4
 from modules import utils
-import time
+#import time
 import math 
 board = pymata4.Pymata4()
 
