@@ -24,6 +24,8 @@ def execute(inputs, register): #function with 2 inputs: inputs and register(ligh
                     state["phase"], state["clock"] = 1, utils.sleep(2) # This just saves space by assigning two variables at the same time (i.e. state["phase"] = 1)
                     
                     print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
+                else:
+                    utils.change_light(register["TL4"], "G")
 
         case 1:# This is the second phase
             if time.time() >= state["clock"]:
