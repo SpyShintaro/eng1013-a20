@@ -2,20 +2,61 @@ import time
 from pymata4 import pymata4
 
 # Low Level Functions
-def get_inputs() -> dict:
-    # Reads all inputs from the R-2R Ladder
+def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
+    # Debugging for Subsystem 2
+    if not debug:
+        pb1 = True if board.digital_read(12)[0] == 0 else False
+    else:
+        pb1 = True
+    
+    if not debug:
+        #us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
+
+        us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
+    else:
+        us2 = False
+
+    us3 = False
+    
     return {
-        "PB1": True,
+        "PB1": pb1,
         "US1": False,
-        "US2": False,
-        "US3": True
+        "US2": us2,
+        "US3": us3
     }
 
-def handle_outputs():
-    pass
+def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict):
+    board.digital_write(4, register1["TL3"]["R"]) # TL3 Red
+    #board.digital_write(5, register1["TL3"]["Y"]) # TL
+    board.digital_write(5, register1["TL3"]["G"]) # TL3 Green
+
+    """ board.digital_write(6, register["PL1"]["G"])
+    board.digital_write(7, register["PL1"]["R"]) """
+
+    board.digital_write(10, register3["WL"]["WL1"]) # WL 1
+    board.digital_write(11, register3["WL"]["WL2"]) # WL 2
+
+def save_reg(*regs):
+    savedRegs = []
+    for reg in regs: # Each shiftRegister dictionary
+        savedReg = {}
+        for pinset in reg: # Checks the pinset variables: like TL4 = {} or FL1 = 0
+            if type(reg[pinset]) is dict: # When pinset is a nested dict like TL4
+                pins = {}
+                for pin in reg[pinset]:
+                    pins[pin] = reg[pinset][pin] 
+                
+                savedReg[pinset] = pins
+            else: # When pinset is a single pin like FL1
+                savedReg[pinset] = reg[pinset]
+        
+        savedRegs.append(savedReg)
+    
+    return savedRegs
+    
 
 # High Level Functions
-def sleep(duration: float) -> float:
+def sleep(duration: float) -> float: 
     """
     Function for assigning soft delay in between processes
 
@@ -45,43 +86,51 @@ def change_light(lightSet: dict, lightPin: str):
         else:
             lightSet[light] = 0
 
-def flash_light(lightSet: dict, lightPin: str, interval: int, length: int, startTime=0, timeCheck=0, phase=0, clock=0):
+def kill_lights(lightSet):
+    for light in lightSet:
+        lightSet[light] = 0
+
+def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase=0, clock=0.0):
     """
     PARAMATERS:
     lightSet -> The set of output LEDs to be modified
     lightPin -> The LED within lightSet to be flashed on and off
-    interval -> The amount of time in ms that the Arduino will wait between each change in state
-    length -> The time in seconds that the function will run
+    interval -> The amount of time in s that the Arduino will wait between each change in state
+    
+    These parameters have default values. The first time you call this function leave these blank so the program knows you only just started flashing the lights
+
+    startTime (int) = 0 -> Time that the function was first called
+    phase (int) = 0 -> Current state of the function
+    clock (float) = 0.0 -> Time when function next needs to change state
 
     RETURNS:
     None
     """
-
-    for light in lightSet: # Turns off all LEDs in light set
-        lightSet[light] = 0
     
     if startTime == 0:
         startTime = time.time()
+        clock = sleep(interval)
 
 
-    if time.time() - startTime <= length: # Checks to make sure the function hasn't been running longer than the given length
-        match phase:
-            case 0:
-                if clock <= time.time():
-                    lightSet[lightPin] = 1
-                    clock = sleep(interval/1000)
-                    phase = 1
-                
-            
-            case 1:
-                if clock <= time.time():
-                    lightSet[lightPin] = 0
-                    clock = sleep(interval / 1000)
-                    phase = 0
-        
-        return {
-            "start": startTime,
-            "time": timeCheck,
-            "phase": phase,
-            "clock": clock
-        }
+    match phase:
+        case 0:
+
+            if clock <= time.time():
+                clock = sleep(interval)
+                phase = 1
+            else:
+                lightSet[lightPin] = 1
+                    
+        case 1:
+
+            if clock <= time.time():
+                clock = sleep(interval)
+                phase = 0
+            else:
+                lightSet[lightPin] = 0
+    
+    return {
+        "start": startTime,
+        "phase": phase,
+        "clock": clock
+    }
