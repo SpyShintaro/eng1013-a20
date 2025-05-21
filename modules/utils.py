@@ -39,24 +39,14 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     return {
         "PB1": pb1,
         "US1": False,
-        "US2": us2,
+        "US2": False,
         "US3": True,
         "DS1": True
     }
 
 def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict, pinSet: dict):
-    """ board.digital_write(4, register1["TL3"]["R"]) # TL3 Red
-    #board.digital_write(5, register1["TL3"]["Y"]) # TL
-    board.digital_write(5, register1["TL3"]["G"]) # TL3 Green """
 
-    """ board.digital_write(6, register["PL1"]["G"])
-    board.digital_write(7, register["PL1"]["R"]) """
-
-    """ board.digital_write(10, register3["WL"]["WL1"]) # WL 1
-    board.digital_write(11, register3["WL"]["WL2"]) # WL 2 """
-
-
-    test_outputs(board, register1)
+    write_reg(board, pinSet, register1, register2, register3)
 
 def test_outputs(board: pymata4.Pymata4, register):
     # board.digital_write(2, register["TL4"]["R"])
@@ -102,6 +92,7 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     bits2 = list(reversed(bits2))
 
     bits3 = [reg3.get(k, 0) for k in regOrder3]
+    print(bits3)
     bits3 = list(reversed(bits3))
 
     # Shift out bits

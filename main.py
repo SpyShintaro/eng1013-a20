@@ -61,10 +61,10 @@ shiftReg3 = { # Everything Else
         "WL1": 0,
         "WL2": 0,
     },
-    "FL": 0,
+    "FL": 1,
     "US1": 0,
     "US2": 0,
-    "US3": 0,
+    "US3": 1,
     "None": 0
 }
 
