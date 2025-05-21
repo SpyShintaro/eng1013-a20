@@ -5,7 +5,7 @@ from pymata4 import pymata4
 regOrder1 = [ # The order in which we write to each pin in the register
     "TL1 R", "TL1 Y", "TL1 G",
     "TL2 R", "TL2 Y", "TL2 G",
-    "TL3 R", "TL3 Y", "TL3 G"
+    "TL3 R", "TL3 G"
 ]
 regOrder2 = [
     "TL4 R", "TL4 Y", "TL4 G",
@@ -28,9 +28,9 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         pb1 = True
     
     if not debug:
-        # us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
-
-        us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
+        us1 = True if 2 <= board.sonar_read(9)[0] <= 100 else False
+        us2 = True if 2 <= board.sonar_read(11)[0] <= 100 else False
+        us3 = True if 2 <= board.sonar_read(13)[0] <= 100 else False
     else:
         us3 = False
         us1 = True
@@ -38,9 +38,9 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     
     return {
         "PB1": pb1,
-        "US1": False,
-        "US2": False,
-        "US3": True,
+        "US1": us1,
+        "US2": us2,
+        "US3": us3,
         "DS1": True
     }
 
@@ -86,13 +86,13 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     reg3 = flatten_dict(reg3)
     
     bits1 = [reg1.get(k, 0) for k in regOrder1]
+    print(bits1)
     bits1 = list(reversed(bits1))  # Shift Registers take inputs in reversed order
 
     bits2 = [reg2.get(k, 0) for k in regOrder2]
     bits2 = list(reversed(bits2))
 
     bits3 = [reg3.get(k, 0) for k in regOrder3]
-    print(bits3)
     bits3 = list(reversed(bits3))
 
     # Shift out bits
