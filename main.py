@@ -3,8 +3,6 @@ import time
 
 from modules import utils, s1, s2, s3, s4
 
-debug = False # False when the Arduino is connected
-
 pinSet = {
     "inputs": {},
 
@@ -109,6 +107,8 @@ def main():
             # Requirements and General Features
             if run["s1"]:
                 s1.execute(inputs, shiftReg1, shiftReg3)
+            if run["s2"]:
+                s2.execute(inputs, shiftReg2) # Executes subsystem 2
             
             if run["s3"]:
                 s3.execute(inputs, shiftReg2)

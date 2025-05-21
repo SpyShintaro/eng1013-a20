@@ -168,6 +168,17 @@ def save_reg(*regs):
         savedRegs.append(savedReg)
     
     return savedRegs
+def sleep(duration: float) -> float: 
+    """
+    Function for assigning soft delay in between processes
+
+    PARAMETERS:
+    duration: Time in seconds of delay
+
+    RETURN:
+    endTime: The time at which the process should resume
+    """
+    return time.time() + duration
 
 def change_light(lightSet: dict, lightPin: str):
     """

@@ -51,6 +51,7 @@ def find_light_type():
 		return "night"
 	else:
 		print("Day time detected")
+		print(resultLdr[0])
 		board.digital_write(Fl, 0)
 		return "day"
 
@@ -146,4 +147,11 @@ def overheight_exit_subsystem():
 
 		board.shutdown()
 
+
 overheight_exit_subsystem()
+
+#board.digital_write(greenLightPin, 0)
+#board.digital_write(yellowLightPin, 0)
+#board.digital_write(redLightPin, 1)
+
+#board.digital_write(Fl, 1)

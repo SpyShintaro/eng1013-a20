@@ -94,7 +94,6 @@ def ulstrasonic_sensor1_dependent():
             print("Vehicle height: 4m. Time of detection: ", result[1])
             timeOfDetection = result[1]
             return timeOfDetection
-
     
 def traffic_light_system1():
     """
@@ -105,18 +104,18 @@ def traffic_light_system1():
 
     board.digital_pin_write(greenLightPin1,0)
     board.digital_pin_write(yellowLightPin1,1)
-    warning_lights_system1(5,1) 
-    #buzzer_system1(5,1)
+    #warning_lights_system1(5,1) 
+    buzzer_system1(5,5)
     board.digital_pin_write(greenLightPin2,0)
     board.digital_pin_write(yellowLightPin2, 1)
     board.digital_pin_write(yellowLightPin1, 0)
     board.digital_pin_write(redLightPin1,1)
-    warning_lights_system1(5,1)
-    #buzzer_system1(5,1)
+    #warning_lights_system1(5,1)
+    buzzer_system1(5,5)
     board.digital_pin_write(yellowLightPin2,0)
     board.digital_pin_write(redLightPin2,1)
-    warning_lights_system1(5,5)
-    #buzzer_system1(5,5)
+    #warning_lights_system1(5,5)
+    buzzer_system1(5,5)
 
     while True:
         result = board.sonar_read(triggerPin)
@@ -125,14 +124,14 @@ def traffic_light_system1():
         else:
             board.digital_pin_write(redLightPin1,1)
             board.digital_pin_write(redLightPin2,1)
-            warning_lights_system1(5,0.5)
-            #buzzer_system1(2005,0.5)
+            #warning_lights_system1(5,0.5)
+            buzzer_system1(2005,0.5)
             
 
     board.digital_pin_write(redLightPin1, 0)
     board.digital_pin_write(greenLightPin1, 1)
-    warning_lights_system1(5,5)
-    #buzzer_system1(5,5)
+    #warning_lights_system1(5,5)
+    buzzer_system1(5,5)
     board.digital_pin_write(redLightPin2, 0)
     board.digital_pin_write(greenLightPin2, 1)
 
@@ -157,9 +156,12 @@ def warning_lights_alert_buzzer_system1(a,b):
         while True:
             if time.time() >= endtime:
                 break
+                
+                while warninglights_system1(5,1){  
+                buzzer_system1(5,1)}
 
 """
-
+"""
 def warning_lights_system1(a,b):
     frequency = a
     duration = b
@@ -177,18 +179,36 @@ def warning_lights_system1(a,b):
         while True:
             if time.time() >= endtime:
                 break
-
+      
+def warning_lights_alarm_system1(a,b):
+    frequency = a
+    duration = b
+    timeBetweenFlashes = 1/frequency
+    for _ in range(int(duration*frequency)):
+        board.digital_pin_write(warningLightPin1, 1)
+        board.digital_pin_write(warningLightPin2, 0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+        board.digital_pin_write(warningLightPin2, 1)
+        board.digital_pin_write(warningLightPin1, 0)
+        endtime = sleep(timeBetweenFlashes/2)
+        while True:
+            if time.time() >= endtime:
+                break
+"""
 def buzzer_system1(a,b):
     frequency = a
     duration = b
     timeBetweenBuzzes = 1/frequency
+    endtime = sleep(timeBetweenBuzzes/2)
     for _ in range(int(duration*frequency)):
-        while True:
-            if time.time() >= endtime:
-                board.digital_pin_write(buzzerPin,1)
-                endtime = sleep(timeBetweenBuzzes/2)
-                board.digital_pin_write(buzzerPin,0)
-                endtime = sleep(timeBetweenBuzzes/2)
+        if time.time() >= endtime:
+            board.digital_pin_write(buzzerPin,1)
+            endtime = sleep(timeBetweenBuzzes/2)
+            board.digital_pin_write(buzzerPin,0)
+            endtime = sleep(timeBetweenBuzzes/2)
 
 def sleep(duration: float) -> float:
     """

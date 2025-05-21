@@ -15,6 +15,7 @@ state = {
 }
 
 def execute(inputs, register):
+
     match state["phase"]:
         case 0:
             if time.time() >= state["clock"]:
@@ -29,6 +30,7 @@ def execute(inputs, register):
         case 0.5: # Noise filtering
             if time.time() >= state["clock"]:
                 if inputs["US3"]:
+                    print("detected")
                     utils.change_light(register["TL5"], "Y")
                     state["phase"] = 1
                     state["clock"] = utils.sleep(2)

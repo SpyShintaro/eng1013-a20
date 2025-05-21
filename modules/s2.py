@@ -12,11 +12,11 @@ state = { # Stores information about the subsystem's current progress
     }
 }
 
-def execute(inputs, register):
+def execute(inputs, register): #function with 2 inputs: inputs and register(light)
     match state["phase"]:
 
         # Initial Phase
-        case 0:
+        case 0:# This is the initial phase
             if time.time() >= state["clock"]:
                 if inputs["PB1"]:
                     print("crossing")
@@ -27,7 +27,7 @@ def execute(inputs, register):
                 else:
                     utils.change_light(register["TL4"], "G")
 
-        case 1:
+        case 1:# This is the second phase
             if time.time() >= state["clock"]:
                 utils.change_light(register["TL4"], "R")
                 utils.change_light(register["PL1"], "G")
@@ -37,7 +37,7 @@ def execute(inputs, register):
                 print(f"\033[0;92;49mTL4\033[0m: {register['TL4']}")
                 print(f"\033[0;92;49mPL1\033[0m: {register['PL1']}")
         
-        case 2:
+        case 2:# This is the third phase
             if time.time() >= state["clock"]:
                 state["phase"] = 3
                 state["clock"] = utils.sleep(2)
