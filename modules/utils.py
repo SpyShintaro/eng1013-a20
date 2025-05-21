@@ -30,18 +30,18 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     if not debug:
         # us2 = True if board.digital_read(12)[0] == 0 else False # Debugging for subsystem 2
 
-        us3 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
+        us2 = True if 2 <= board.sonar_read(9)[0] <= 100 else False # Debugging for subsystem 4
     else:
         us3 = False
         us1 = True
 
-    us2 = False
     
     return {
         "PB1": pb1,
         "US1": False,
-        "US2": False,
-        "US3": True
+        "US2": us2,
+        "US3": True,
+        "DS1": True
     }
 
 def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict, pinSet: dict):
@@ -56,12 +56,15 @@ def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, reg
     board.digital_write(11, register3["WL"]["WL2"]) # WL 2 """
 
 
-    write_reg(board, pinSet, register1, register2, register3)
+    test_outputs(board, register1)
 
 def test_outputs(board: pymata4.Pymata4, register):
-    board.digital_write(2, register["TL4"]["R"])
-    board.digital_write(3, register["TL4"]["Y"])
-    board.digital_write(4, register["TL4"]["G"])
+    # board.digital_write(2, register["TL4"]["R"])
+    # board.digital_write(3, register["TL4"]["Y"])
+    # board.digital_write(4, register["TL4"]["G"])
+
+    board.digital_write(5, register["TL3"]["G"])
+    board.digital_write(4, register["TL3"]["R"])
 
 def pulse(board: pymata4.Pymata4, pin: int, delay=0.001):
     board.digital_write(pin, 1)
@@ -192,6 +195,12 @@ def change_light(lightSet: dict, lightPin: str):
             lightSet[light] = 1
         else:
             lightSet[light] = 0
+
+def pin_on(lightSet, lightPin):
+    lightSet[lightPin] = 1
+
+def pin_off(lightSet, lightPin):
+    lightSet[lightPin] = 0
 
 def kill_lights(lightSet):
     for light in lightSet:
