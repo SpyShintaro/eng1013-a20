@@ -1,7 +1,7 @@
 #subsystem 1 integration attempt
 import time
 from pymata4 import pymata4
-from utils import *
+from utils import sleep, change_light
 board = pymata4.Pymata4()
 
 """shiftReg1 = { # First Shift Register Handles TL1, TL2, and TL3 outputs
