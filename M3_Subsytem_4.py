@@ -37,12 +37,12 @@ def warning_light(a):
 
     board.digital_write(warningLightPin1, 1)
     board.digital_write(warningLightPin2, 0)
-    time.sleep(timeBetweenFlash)
-    #utils.sleep(timeBetweenFlash)
+    #time.sleep(timeBetweenFlash)
+    utils.sleep(timeBetweenFlash)
     board.digital_write(warningLightPin1, 0)
     board.digital_write(warningLightPin2, 1) 
-    time.sleep(timeBetweenFlash)
-    #utils.sleep(timeBetweenFlash)       
+    #time.sleep(timeBetweenFlash)
+    utils.sleep(timeBetweenFlash)       
 
 def tunnel_height_detection_subsystem():
     """
@@ -65,7 +65,9 @@ def tunnel_height_detection_subsystem():
                     
                 if len(recentReadings) < 5:  
                     recentReadings.append(board.sonar_read(triggerPin))
-                    time.sleep(0.5)
+                    #time.sleep(0.5)
+                    utils.sleep(0.5)       
+
                 elif len(recentReadings) > 5:  
                     recentReadings.pop(0)
                     #tolerance of 5cm
@@ -78,18 +80,14 @@ def tunnel_height_detection_subsystem():
             
                 board.digital_write(greenLightPin, 0)
                 board.digital_write(redLightPin, 1)  
-                warning_light(5)            
+                #warning_light(5)            
             else:
                 board.digital_write(greenLightPin, 1)
                 board.digital_write(redLightPin, 0) 
-                board.digital_write(warningLightPin1, 0)
-                board.digital_write(warningLightPin2, 0)
 
     except KeyboardInterrupt:
         board.digital_write(greenLightPin, 0)
         board.digital_write(redLightPin, 0) 
-        board.digital_write(warningLightPin1, 0)
-        board.digital_write(warningLightPin2, 0)
         board.shutdown()
     return result[0]  
 
