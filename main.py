@@ -3,7 +3,7 @@ import time
 
 from modules import utils, s1, s2, s3, s4
 
-debug = True # Set to False when we connect to Arduino
+debug = False # Set to False when we connect to Arduino
 
 pinSet = { # Determining our input and output pins
     "inputs": {}, # Analog input pins
@@ -57,11 +57,11 @@ shiftReg2 = { # TL4, TL5, PL1
     },
 }
 shiftReg3 = { # Everything Else
-    "PA1": 0,
+    "PA1 LOW": 0,
+    "PA1 HIGH": 0,
     "WL1": 0,
     "WL2": 0,
     "FL": 1,
-    "PA1 High": 0, # Activates a transistor that enables a higher frequency signal to the buzzer
     "None": 0,
     "None": 1,
     "None": 0
