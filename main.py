@@ -62,9 +62,9 @@ shiftReg3 = { # Everything Else
     "WL1": 0,
     "WL2": 0,
     "FL": 1,
-    "None": 0,
-    "None": 1,
-    "None": 0
+    "None 1": 0,
+    "None 2": 0,
+    "None 3": 0
 }
 
 run = {

@@ -13,9 +13,9 @@ regOrder2 = [
     "PL1 R", "PL1 G"
 ]
 regOrder3 = [
-    "PA1", "WL WL1", "WL WL2",
-    "FL", "US1", "US2",
-    "US3", "None"
+    "PA1 LOW", "PA1 HIGH", "WL1",
+    "WL2", "FL", "None 1",
+    "None 2", "None 3"
 ]
 
 # Low Level Functions (Works directly with the Arduino)
@@ -89,7 +89,6 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
 
     reg1 = flatten_dict(reg1) # Removes all group names in each dict (like "TL1", which doesn't refer to just one pin)
     reg2 = flatten_dict(reg2)
-    reg3 = flatten_dict(reg3)
     
     bits1 = [reg1.get(k, 0) for k in regOrder1]
     bits1 = list(reversed(bits1))  # Shift Registers take inputs in reversed order
@@ -98,6 +97,7 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     bits2 = list(reversed(bits2))
 
     bits3 = [reg3.get(k, 0) for k in regOrder3]
+    print(bits3)
     bits3 = list(reversed(bits3))
 
     # Shift out bits
@@ -229,6 +229,7 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 1
             else:
                 lightSet[lightPin] = 1
+                print(lightSet)
                     
         case 1:
 
@@ -237,6 +238,7 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 0
             else:
                 lightSet[lightPin] = 0
+                print(lightSet)
     
     return {
         "start": startTime,

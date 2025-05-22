@@ -73,7 +73,6 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
 
         case 1:
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
-
             if time.time() >= state["clock"]:
                 utils.change_light(trafficRegister["TL1"], "R")
                 utils.change_light(trafficRegister["TL2"], "Y")
@@ -93,7 +92,7 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                 print(trafficRegister["TL2"])
 
                 state["phase"] = 3
-                state["clock"] = utils.sleep(29)
+                state["clock"] = utils.sleep(5)
         
         case 3:
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
