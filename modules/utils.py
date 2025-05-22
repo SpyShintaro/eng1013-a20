@@ -13,9 +13,9 @@ regOrder2 = [
     "PL1 R", "PL1 G"
 ]
 regOrder3 = [
-    "PA1", "WL WL1", "WL WL2",
-    "FL", "US1", "US2",
-    "US3", "None"
+    "PA1 LOW", "PA1 HIGH", "WL1",
+    "WL2", "FL", "None 1",
+    "None 2", "None 3"
 ]
 
 # Low Level Functions (Works directly with the Arduino)
@@ -82,14 +82,13 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     dataReg3 = pinSet["outputs"]["SER3"]
 
     # Pins that control all three registers
-    CLOCK_PIN = pinSet["outputs"]["SRCLK"]
-    LATCH_PIN = pinSet["outputs"]["RCLK"]
+    clockPin = pinSet["outputs"]["SRCLK"]
+    latchPin = pinSet["outputs"]["RCLK"]
 
-    board.digital_write(LATCH_PIN, 0)
+    board.digital_write(latchPin, 0)
 
     reg1 = flatten_dict(reg1) # Removes all group names in each dict (like "TL1", which doesn't refer to just one pin)
     reg2 = flatten_dict(reg2)
-    reg3 = flatten_dict(reg3)
     
     bits1 = [reg1.get(k, 0) for k in regOrder1]
     bits1 = list(reversed(bits1))  # Shift Registers take inputs in reversed order
@@ -98,6 +97,7 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     bits2 = list(reversed(bits2))
 
     bits3 = [reg3.get(k, 0) for k in regOrder3]
+    print(bits3)
     bits3 = list(reversed(bits3))
 
     # Shift out bits
@@ -108,14 +108,14 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
         board.digital_write(dataReg3, bits3[bit])
         
         # Tells all shift registers to move onto next pin
-        board.digital_write(CLOCK_PIN, 1)
+        board.digital_write(clockPin, 1)
         time.sleep(0.01)
-        board.digital_write(CLOCK_PIN, 0)
+        board.digital_write(clockPin, 0)
 
     # Latch the outputs
-    board.digital_write(LATCH_PIN, 1)
+    board.digital_write(latchPin, 1)
     time.sleep(0.0001)
-    board.digital_write(LATCH_PIN, 0)
+    board.digital_write(latchPin, 0)
 
 # High Level Functions (Handles logic within the program and interacts with registers through dictionaries)
 def sleep(duration: float) -> float:
@@ -154,18 +154,6 @@ def flatten_dict(oldDict: dict) -> dict:
         else:
             flat[key] = value
     return flat
-
-def sleep(duration: float) -> float: 
-    """
-    Function for assigning soft delay in between processes
-
-    PARAMETERS:
-    duration: Time in seconds of delay
-
-    RETURN:
-    endTime: The time at which the process should resume
-    """
-    return time.time() + duration
 
 def change_light(lightSet: dict, lightPin: str) -> None:
     """
@@ -241,6 +229,7 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 1
             else:
                 lightSet[lightPin] = 1
+                print(lightSet)
                     
         case 1:
 
@@ -249,6 +238,7 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 0
             else:
                 lightSet[lightPin] = 0
+                print(lightSet)
     
     return {
         "start": startTime,

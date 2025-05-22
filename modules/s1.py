@@ -54,6 +54,7 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                     print(f"Detected vehicle above height 4m at time: {time.time()}")
                     utils.change_light(trafficRegister["TL1"], "Y")
                     utils.change_light(trafficRegister["TL2"], "G")
+                    utils.pin_on(warningRegister, "PA1 LOW")
 
                     state["phase"] = 1
                     state["clock"] = utils.sleep(1)
@@ -66,11 +67,12 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                 else:
                     utils.change_light(trafficRegister["TL1"], "G")
                     utils.change_light(trafficRegister["TL2"], "G")
+
+                    utils.pin_off(warningRegister, "PA1")
                     state["phase"] = 0
 
         case 1:
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
-
             if time.time() >= state["clock"]:
                 utils.change_light(trafficRegister["TL1"], "R")
                 utils.change_light(trafficRegister["TL2"], "Y")
@@ -90,18 +92,19 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                 print(trafficRegister["TL2"])
 
                 state["phase"] = 3
-                state["clock"] = utils.sleep(29)
+                state["clock"] = utils.sleep(5)
         
         case 3:
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             if time.time() >= state["clock"]:
                 if inputs["US1"]:
                     state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
-                    utils.pin_on(warningRegister, "PA1 High")
+                    utils.pin_on(warningRegister, "PA1 HIGH")
+                    utils.pin_off(warningRegister, "PA1 LOW")
                 else:
                     utils.change_light(trafficRegister["TL2"], "G")
-                    utils.pin_off(warningRegister, "PA1")
-                    utils.pin_off(warningRegister, "PA1 High")
+                    utils.pin_off(warningRegister, "PA1 LOW")
+                    utils.pin_off(warningRegister, "PA1 HIGH")
                     utils.pin_off(warningRegister, "WL1")
 
                     print(trafficRegister["TL1"])
