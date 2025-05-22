@@ -126,7 +126,7 @@ def traffic_light_system1():
             board.digital_pin_write(redLightPin2,1)
             #warning_lights_system1(5,0.5)
             buzzer_system1(2005,0.5)
-            
+    
 
     board.digital_pin_write(redLightPin1, 0)
     board.digital_pin_write(greenLightPin1, 1)
