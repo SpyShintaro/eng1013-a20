@@ -11,10 +11,20 @@ state = {
         "start": 0,
         "phase": 0,
         "clock": 0,
-    }
+    },
+
+    "triggered": False # Checking if integration feature has been triggered
 }
 
-def execute(inputs, trafficRegister, lightsRegister):
+def execute(inputs: dict, trafficRegister: dict, lightsRegister: dict):
+    """
+    Primary loop function for subsystem 3
+
+    PARAMETERS:
+    inputs -> Dictionary containing all incoming inputs from Arduino pins
+    trafficRegister -> Shift Register containing the subsystem's traffic lights
+    lightsRegister -> Shift register containing the floodlights
+    """
 
     match state["phase"]:
         case 0:
@@ -82,3 +92,11 @@ def execute(inputs, trafficRegister, lightsRegister):
             else:
                 state["phase"] = 0
                 state["US3"] = False
+
+def integration(inputs):
+    if inputs["US3"]:
+        state["triggered"] = True
+    else:
+        if state["triggered"] == True:
+            state["triggered"] = False
+            return 0

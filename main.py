@@ -115,7 +115,16 @@ def main() -> None:
                 inputs = utils.get_inputs(True)
 
             # Handle Integration Features First
-            s4.integration(inputs, shiftReg2, run)
+            # integ1 = s1.integration(inputs, shiftReg2)
+            integ3 = s3.integration(inputs)
+            integ4 = s4.integration(inputs, shiftReg1, shiftReg2, shiftReg3, run)
+
+            if integ3: # Resets subsystem 1 to default state after subsystem 3 integration feature
+                s1.state["phase"] = integ3
+            
+            if integ4: # Resets subsystem 2 to default state after subsystem 4 integration feature
+                s2.state["phase"] = integ4
+                s1.state["phase"] = integ4
 
             # Requirements and General Features (Default behaviour)
             if run["s1"]:

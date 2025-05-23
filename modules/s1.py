@@ -1,7 +1,7 @@
 import time
 from modules import utils
 
-warningInterval = 0.25
+warningInterval = 0.5
 
 state = {
     "phase": 0,
@@ -39,74 +39,64 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
     """
 
     match state["phase"]:
-        case 0:
+        case 0: # Before overheight vehicle detected
             if inputs["US1"]:
                 state["phase"], state["clock"] = 0.5, utils.sleep(0.5)
             else:
                 utils.change_light(trafficRegister["TL1"], "G")
                 utils.change_light(trafficRegister["TL2"], "G")
+                utils.pin_off(warningRegister, "WL1 POWER")
         
-        case 0.5: # Noise filtering
+        case 0.5: # Noise filtering for detection
             if time.time() >= state["clock"]:
                 if inputs["US1"]:
                     print(f"Detected vehicle above height 4m at time: {time.time()}")
                     utils.change_light(trafficRegister["TL1"], "Y")
                     utils.change_light(trafficRegister["TL2"], "G")
-                    utils.pin_on(warningRegister, "PA1 POWER")
+                    utils.pin_on(warningRegister, "PA1 LOW")
+                    utils.pin_on(warningRegister, "WL1 POWER")
 
                     state["phase"] = 1
                     state["clock"] = utils.sleep(1)
 
-                    print(trafficRegister["TL1"])
-                    print(trafficRegister["TL2"])
-
                     state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval)
-                    utils.pin_on(warningRegister, "PA1 POWER") # Activates lower frequency piezo signal
                 else:
                     utils.change_light(trafficRegister["TL1"], "G")
                     utils.change_light(trafficRegister["TL2"], "G")
 
-                    utils.pin_off(warningRegister, "PA1 POWER")
-                    utils.pin_off(warningRegister, "")
+                    utils.pin_off(warningRegister, "PA1 LOW")
+                    utils.pin_off(warningRegister, "PA1 HIGH")
                     state["phase"] = 0
 
-        case 1:
+        case 1: # Turning TL1 red and TL2 Yellow
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             if time.time() >= state["clock"]:
                 utils.change_light(trafficRegister["TL1"], "R")
                 utils.change_light(trafficRegister["TL2"], "Y")
 
-                print(trafficRegister["TL1"])
-                print(trafficRegister["TL2"])
-
                 state["phase"] = 2
                 state["clock"] = utils.sleep(1)
         
-        case 2:
+        case 2: # Turning TL2 Red as well
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             if time.time() >= state["clock"]:
                 utils.change_light(trafficRegister["TL2"], "R")
 
-                print(trafficRegister["TL1"])
-                print(trafficRegister["TL2"])
-
                 state["phase"] = 3
-                state["clock"] = utils.sleep(5)
+                state["clock"] = utils.sleep(29)
         
-        case 3:
+        case 3: # After 30 seconds start high frequency buzer
             state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             if time.time() >= state["clock"]:
                 if inputs["US1"]:
-                    state["flashing"] = utils.flash_light(warningRegister, "WL1", warningInterval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
                     utils.pin_on(warningRegister, "PA1 HIGH")
+                    utils.pin_off(warningRegister, "PA1 LOW")
                 else:
                     utils.change_light(trafficRegister["TL1"], "G")
                     utils.change_light(trafficRegister["TL2"], "G")
-                    utils.pin_off(warningRegister, "PA1 POWER")
+                    utils.pin_off(warningRegister, "PA1 LOW")
                     utils.pin_off(warningRegister, "PA1 HIGH")
                     utils.pin_off(warningRegister, "WL1")
-
-                    print(trafficRegister["TL1"])
-                    print(trafficRegister["TL2"])
+                    utils.pin_off(warningRegister, "WL1 POWER")
 
                     state["phase"] = 0

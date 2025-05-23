@@ -13,7 +13,7 @@ regOrder2 = [
     "PL1 R", "PL1 G"
 ]
 regOrder3 = [
-    "PA1 POWER", "PA1 HIGH", "WL1",
+    "PA1 LOW", "PA1 HIGH", "WL1",
     "WL2", "FL", "WL1 POWER",
     "None 2", "None 3"
 ]
@@ -48,7 +48,6 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
     
     if not debug:
         ldrRead = board.analog_read(1)[0]
-        print(ldrRead)
         if 0 <= ldrRead < 500: # Night detected
             ds1 = True
         else: 
