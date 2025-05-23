@@ -48,12 +48,22 @@ def execute(inputs, trafficRegister, lightsRegister):
                 utils.change_light(trafficRegister["TL5"], "G")
                 state["phase"] = 2
                 state["clock"] = utils.sleep(5)
+
+                if inputs["DS1"]:
+                    utils.pin_on(lightsRegister, "FL")
+                else:
+                    utils.pin_off(lightsRegister, "FL")
         
         case 2:
             if time.time() >= state["clock"]:
                 if inputs["US3"]:
                     state["flashing"] = utils.flash_light(trafficRegister["TL5"], "G", 0.5)
                     state["phase"] = 3
+
+                    if inputs["DS1"]:
+                        utils.pin_on(lightsRegister, "FL")
+                    else:
+                        utils.pin_off(lightsRegister, "FL")
                     
                 else:
                     utils.change_light(trafficRegister["TL5"], "R")
@@ -64,6 +74,11 @@ def execute(inputs, trafficRegister, lightsRegister):
         case 3:
             if inputs["US3"]:
                 state["flashing"] = utils.flash_light(trafficRegister["TL5"], "G", 0.5, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
+
+                if inputs["DS1"]:
+                    utils.pin_on(lightsRegister, "FL")
+                else:
+                    utils.pin_off(lightsRegister, "FL")
             else:
                 state["phase"] = 0
                 state["US3"] = False

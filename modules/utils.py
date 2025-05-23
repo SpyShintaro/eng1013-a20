@@ -13,7 +13,7 @@ regOrder2 = [
     "PL1 R", "PL1 G"
 ]
 regOrder3 = [
-    "PA1 LOW", "PA1 HIGH", "WL1",
+    "PA1 POWER", "PA1 HIGH", "WL1",
     "WL2", "FL", "WL1 POWER",
     "None 2", "None 3"
 ]
@@ -45,6 +45,16 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         us3 = False
         us2 = False
         us1 = True
+    
+    if not debug:
+        ldrRead = board.analog_read(1)[0]
+        print(ldrRead)
+        if 0 <= ldrRead < 500: # Night detected
+            ds1 = True
+        else: 
+            ds1 = False
+    else:
+        ds1 = True
 
     
     return {
@@ -52,7 +62,7 @@ def get_inputs(debug: bool, board: pymata4.Pymata4 = None) -> dict:
         "US1": us1,
         "US2": us2,
         "US3": us3,
-        "DS1": True
+        "DS1": ds1
     }
 
 def handle_outputs(board: pymata4.Pymata4, register1: dict, register2: dict, register3: dict, pinSet: dict):
