@@ -6,7 +6,10 @@ from modules import utils, s1, s2, s3, s4
 debug = False # Set to False when we connect to Arduino
 
 pinSet = { # Determining our input and output pins
-    "inputs": {}, # Analog input pins
+    "inputs": {
+        "PB1": 0,
+        "DS1": 1
+    }, # Analog input pins
 
     "outputs": {
         "SRCLK": 3,
@@ -62,9 +65,9 @@ shiftReg3 = { # Everything Else
     "WL1": 0,
     "WL2": 0,
     "FL": 1,
-    "None 1": 0,
-    "None 2": 0,
-    "None 3": 0
+    "WL1 POWER": 0,
+    "None 2": 1,
+    "None 3": 1
 }
 
 run = {
@@ -97,6 +100,8 @@ def main() -> None:
     while True:
         try:
 
+            start = time.time()
+
             # Determines whether default behaviours are overriden
             run["s1"] = True
             run["s2"] = True
@@ -110,7 +115,16 @@ def main() -> None:
                 inputs = utils.get_inputs(True)
 
             # Handle Integration Features First
-            s4.integration(inputs, shiftReg2, run)
+            # integ1 = s1.integration(inputs, shiftReg2)
+            integ3 = s3.integration(inputs)
+            integ4 = s4.integration(inputs, shiftReg1, shiftReg2, shiftReg3, run)
+
+            if integ3: # Resets subsystem 1 to default state after subsystem 3 integration feature
+                s1.state["phase"] = integ3
+            
+            if integ4: # Resets subsystem 2 to default state after subsystem 4 integration feature
+                s2.state["phase"] = integ4
+                s1.state["phase"] = integ4
 
             # Requirements and General Features (Default behaviour)
             if run["s1"]:
@@ -152,16 +166,14 @@ def setup() -> None:
     for pin in outputs:
         board.set_pin_mode_digital_output(outputs[pin])
 
-    for pin in inputs:
-        board.set_pin_mode_digital_input(inputs[pin])
-
-    board.set_pin_mode_analog_input(0) # This will be the pin connected to PB1
+    board.set_pin_mode_analog_input(0) # PB1
+    board.set_pin_mode_analog_input(1) # LDR
 
     board.set_pin_mode_sonar(9, 8, timeout=10000000)
     board.set_pin_mode_sonar(11, 10, timeout=10000000)
     board.set_pin_mode_sonar(13, 12, timeout=10000000)
 
-    time.sleep(0.1)
+    time.sleep(0.01)
 
     main()
 
