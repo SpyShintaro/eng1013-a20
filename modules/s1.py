@@ -1,7 +1,7 @@
 import time
 from modules import utils
 
-warningInterval = 0.5
+warningInterval = 0.25
 
 state = {
     "phase": 0,
@@ -42,7 +42,6 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
         case 0:
             if inputs["US1"]:
                 state["phase"], state["clock"] = 0.5, utils.sleep(0.5)
-                print("started check")
             else:
                 utils.change_light(trafficRegister["TL1"], "G")
                 utils.change_light(trafficRegister["TL2"], "G")
@@ -50,7 +49,6 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
         case 0.5: # Noise filtering
             if time.time() >= state["clock"]:
                 if inputs["US1"]:
-                    print("Vehicle Detected")
                     print(f"Detected vehicle above height 4m at time: {time.time()}")
                     utils.change_light(trafficRegister["TL1"], "Y")
                     utils.change_light(trafficRegister["TL2"], "G")
@@ -69,6 +67,7 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                     utils.change_light(trafficRegister["TL2"], "G")
 
                     utils.pin_off(warningRegister, "PA1")
+                    utils.pin_off(warningRegister, "")
                     state["phase"] = 0
 
         case 1:
@@ -102,6 +101,7 @@ def execute(inputs: dict, trafficRegister: dict, warningRegister: dict) -> None:
                     utils.pin_on(warningRegister, "PA1 HIGH")
                     utils.pin_off(warningRegister, "PA1 LOW")
                 else:
+                    utils.change_light(trafficRegister["TL1"], "G")
                     utils.change_light(trafficRegister["TL2"], "G")
                     utils.pin_off(warningRegister, "PA1 LOW")
                     utils.pin_off(warningRegister, "PA1 HIGH")

@@ -62,9 +62,9 @@ shiftReg3 = { # Everything Else
     "WL1": 0,
     "WL2": 0,
     "FL": 1,
-    "None 1": 0,
-    "None 2": 0,
-    "None 3": 0
+    "WL1 POWER": 0,
+    "None 2": 1,
+    "None 3": 1
 }
 
 run = {
@@ -96,6 +96,8 @@ def main() -> None:
     
     while True:
         try:
+
+            start = time.time()
 
             # Determines whether default behaviours are overriden
             run["s1"] = True
@@ -161,7 +163,7 @@ def setup() -> None:
     board.set_pin_mode_sonar(11, 10, timeout=10000000)
     board.set_pin_mode_sonar(13, 12, timeout=10000000)
 
-    time.sleep(0.1)
+    time.sleep(0.01)
 
     main()
 

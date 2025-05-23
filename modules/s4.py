@@ -27,7 +27,7 @@ def execute(inputs, traffic_register, warning_register, run):
             
             else:
                 utils.change_light(traffic_register["TL3"], "G")
-                utils.pin_off(warning_register, "WL1")
+                utils.pin_off(warning_register, "WL2")
         
         case 1: # Overheight vehicle detected: start flashing first warning light
             state["flashing"] = utils.flash_light(warning_register, "WL2", warning_interval)
