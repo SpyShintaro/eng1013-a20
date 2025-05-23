@@ -24,7 +24,8 @@ board.set_pin_mode_digital_output(timer2)
         board.digital_write(timer2, 0)
         board.shutdown()"""
  
-board.digital_write(12, 1)
+board.digital_write(timer2, 1)
 time.sleep(4)
-board.digital_write(12, 1)
+print("changing")
+board.digital_write(timer2, 0)
 board.shutdown()
