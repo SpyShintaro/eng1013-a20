@@ -14,7 +14,7 @@ regOrder2 = [
 ]
 regOrder3 = [
     "PA1 LOW", "PA1 HIGH", "WL1",
-    "WL2", "FL", "None 1",
+    "WL2", "FL", "WL1 POWER",
     "None 2", "None 3"
 ]
 
@@ -97,7 +97,6 @@ def write_reg(board: pymata4.Pymata4, pinSet: dict, reg1: dict, reg2: dict, reg3
     bits2 = list(reversed(bits2))
 
     bits3 = [reg3.get(k, 0) for k in regOrder3]
-    print(bits3)
     bits3 = list(reversed(bits3))
 
     # Shift out bits
@@ -229,7 +228,6 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 1
             else:
                 lightSet[lightPin] = 1
-                print(lightSet)
                     
         case 1:
 
@@ -238,7 +236,6 @@ def flash_light(lightSet: dict, lightPin: str, interval: int, startTime=0, phase
                 phase = 0
             else:
                 lightSet[lightPin] = 0
-                print(lightSet)
     
     return {
         "start": startTime,
