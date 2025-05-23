@@ -3,11 +3,10 @@ import time
 
 board = pymata4.Pymata4()
 
-timer1 = 13
-timer2 = 12
+timer1 = 12
+timer2 = 13
 
 board.set_pin_mode_digital_output(timer1)
-
 board.set_pin_mode_digital_output(timer2)
 
 
