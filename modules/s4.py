@@ -38,11 +38,8 @@ def execute(inputs, traffic_register, warning_register, run):
                 state["flashing"] = utils.flash_light(warning_register, "WL2", warning_interval, state["flashing"]["start"], state["flashing"]["phase"], state["flashing"]["clock"])
             else:
                 state["phase"] = 0
-        
-        case 3: # Overheight vehicle detected: continue flashing both lights simultaneously
-            if inputs["US2"]:
-                state["flashing-1"] = utils.flash_light(warning_register["WL"], "WL1", warning_interval, state["flashing-1"]["start"], state["flashing-1"]["phase"], state["flashing-1"]["clock"])
-                state["flashing-2"] = utils.flash_light(warning_register["WL"], "WL2", warning_interval, state["flashing-2"]["start"], state["flashing-2"]["phase"], state["flashing-2"]["clock"])
-            else:
-                state["phase"] = 0
->>>>>>> 26fdfb4fc75b17d894cac98f4474341b736fdfac
+
+def integration(inputs, register, run):
+    if inputs["US2"]:
+        run["s2"] = False
+        utils.change_light(register["TL4"], "R")

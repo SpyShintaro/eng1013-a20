@@ -6,7 +6,10 @@ from modules import utils, s1, s2, s3, s4
 debug = False # Set to False when we connect to Arduino
 
 pinSet = { # Determining our input and output pins
-    "inputs": {}, # Analog input pins
+    "inputs": {
+        "PB1": 0,
+        "DS1": 1
+    }, # Analog input pins
 
     "outputs": {
         "SRCLK": 3,
@@ -154,10 +157,8 @@ def setup() -> None:
     for pin in outputs:
         board.set_pin_mode_digital_output(outputs[pin])
 
-    for pin in inputs:
-        board.set_pin_mode_digital_input(inputs[pin])
-
-    board.set_pin_mode_analog_input(0) # This will be the pin connected to PB1
+    board.set_pin_mode_analog_input(0) # PB1
+    board.set_pin_mode_analog_input(1) # LDR
 
     board.set_pin_mode_sonar(9, 8, timeout=10000000)
     board.set_pin_mode_sonar(11, 10, timeout=10000000)
