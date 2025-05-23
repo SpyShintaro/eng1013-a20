@@ -28,8 +28,8 @@ board.set_pin_mode_digital_output(yellowLightPin2)
 board.set_pin_mode_digital_output(redLightPin2)
 
 #set pin number for the ultrasonic sensor
-triggerPin = 8
-echoPin = 9
+triggerPin = 13
+echoPin = 12
 
 board.set_pin_mode_sonar(triggerPin, echoPin, timeout=10000000)
 
@@ -83,13 +83,14 @@ def ulstrasonic_sensor1_dependent():
     result=[]
     while True:
 
-        endtime = sleep(0.2)
+        endtime = sleep(1)
+        
         while True:
             if time.time() >= endtime:
                 break
 
         result=board.sonar_read(triggerPin)#read from the US1
-
+        print ("time of detection:", result[1])
         if (2<result[0]<100): #defined width of the road
             print("Vehicle height: 4m. Time of detection: ", result[1])
             timeOfDetection = result[1]
@@ -116,18 +117,6 @@ def traffic_light_system1():
     board.digital_pin_write(redLightPin2,1)
     #warning_lights_system1(5,5)
     buzzer_system1(5,5)
-
-    while True:
-        result = board.sonar_read(triggerPin)
-        if result[0]<=2 or result[0]>=100: #defined width of the road
-            break
-        else:
-            board.digital_pin_write(redLightPin1,1)
-            board.digital_pin_write(redLightPin2,1)
-            #warning_lights_system1(5,0.5)
-            buzzer_system1(2005,0.5)
-    
-
     board.digital_pin_write(redLightPin1, 0)
     board.digital_pin_write(greenLightPin1, 1)
     #warning_lights_system1(5,5)
